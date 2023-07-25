@@ -1,17 +1,8 @@
 const { RateLimiterMongo } = require("rate-limiter-flexible");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const connectDB = require("../config/connectDB");
 
-// connectDB()
 const mongoConn = mongoose.connection;
-
-// try {
-//   mongooseInstance = await mongoose.connect(process.env.DATABASE_URI);
-//   mongoConn = mongooseInstance.connection;
-// } catch (err) {
-//   console.log(err);
-// }
 
 const opts = {
   storeClient: mongoConn,
