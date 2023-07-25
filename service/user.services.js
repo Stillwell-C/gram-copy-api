@@ -4,6 +4,10 @@ const findUser = async (query) => {
   return User.find(query).select("-password").lean().exec();
 };
 
+const findUserWithPassword = async (query) => {
+  return User.find(query).lean().exec();
+};
+
 const findUserById = async (userId) => {
   return User.findById(userId).select("-password").lean().exec();
 };
@@ -63,6 +67,7 @@ const findAndDeleteUser = async (id) => {
 
 module.exports = {
   findUser,
+  findUserWithPassword,
   findUserById,
   findUserByUsernameWithoutPassword,
   findMultipleUsers,
