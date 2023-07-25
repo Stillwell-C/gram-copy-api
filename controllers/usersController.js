@@ -198,43 +198,6 @@ const updateUserInfo = async (req, res) => {
   res.json({ accessToken });
 };
 
-//Action values will be 1 to add -1 to remove
-//UpdateField corresponds to an array on user model such as likedImgs
-// const updateUserArr = async (req, res) => {
-//   const { id, postID, userID, updateField, actionValue } = req.body;
-
-//   if (!postID && !userID) {
-//     return res
-//       .status(400)
-//       .json({ message: "A User ID or Post ID parameter is required" });
-//   }
-
-//   if (!updateField || !actionValue) {
-//     return res.status(400).json({ message: "Update parameters required" });
-//   }
-
-//   const updateID = postID ? postID : userID;
-
-//   let updatedUser;
-//   if (actionValue > 0) {
-//     updatedUser = await findAndUpdateArr(id, {
-//       $push: { [updateField]: updateID },
-//     });
-//   } else {
-//     updatedUser = await findAndUpdateArr(id, {
-//       $pull: { [updateField]: updateID },
-//     });
-//   }
-
-//   if (!updatedUser) {
-//     return res.status(400).json({ message: "Invalid data received" });
-//   }
-
-//   return res
-//     .status(200)
-//     .json({ message: `User's ${updateField} has been updated` });
-// };
-
 const deleteUser = async (req, res) => {
   const { id, adminPassword } = req.body;
 
