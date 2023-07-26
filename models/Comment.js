@@ -7,7 +7,7 @@ const commentSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
-    parentImgId: {
+    parentPostId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Post",
