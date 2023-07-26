@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const postController = require("../controllers/postsController");
+const commentsController = require("../controllers/commentsController");
 
 router
   .route("/")
@@ -10,3 +11,5 @@ router
   .delete(postController.deletePost);
 
 router.route("/:id").get(postController.getPost);
+
+router.route("/:id/comments").get(commentsController.getPostComments);
