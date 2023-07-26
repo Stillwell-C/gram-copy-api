@@ -9,7 +9,7 @@ const imgLikeSchema = new mongoose.Schema({
   parentImgId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "Post",
+    ref: "UserImg",
   },
 });
 
