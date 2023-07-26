@@ -9,8 +9,9 @@ const {
 
 const getAllFollowers = async (req, res) => {
   const { id } = req.params;
+  const { page, limit } = req?.query;
 
-  const followers = await findAllFollowers(id, true);
+  const followers = await findAllFollowers(id, true, page, limit);
 
   if (!followers) {
     return res.status(400).json({ message: "No followers found" });
@@ -21,8 +22,9 @@ const getAllFollowers = async (req, res) => {
 
 const getAllFollowing = async (req, res) => {
   const { id } = req.params;
+  const { page, limit } = req?.query;
 
-  const followers = await findAllFollowing(id, true);
+  const followers = await findAllFollowing(id, true, page, limit);
 
   if (!followers) {
     return res.status(400).json({ message: "No followers found" });
