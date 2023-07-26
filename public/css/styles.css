@@ -21,6 +21,15 @@ body {
 
 img {
     max-width: 500px;
+    animation: colorShift 20s infinite alternate;
+}
+
+@keyframes colorShift {
+    0% {filter: invert(81%) sepia(72%) saturate(373%) hue-rotate(333deg) brightness(103%) contrast(99%)}
+    25% {filter: invert(49%) sepia(92%) saturate(989%) hue-rotate(348deg) brightness(101%) contrast(96%)}
+    50% {filter: invert(26%) sepia(39%) saturate(4761%) hue-rotate(315deg) brightness(87%) contrast(91%)}
+    75% {filter: invert(53%) sepia(93%) saturate(7464%) hue-rotate(275deg) brightness(82%) contrast(85%)}
+    100% {filter: invert(39%) sepia(63%) saturate(6112%) hue-rotate(228deg) brightness(91%) contrast(82%)}
 }
 
 h1 {
