@@ -21,6 +21,9 @@ body {
 
 img {
     max-width: 500px;
+}
+
+.colorShift {
     animation: colorShift 20s infinite alternate;
 }
 
