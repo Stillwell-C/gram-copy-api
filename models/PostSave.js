@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 
-const imgSaveSchema = new mongoose.Schema({
+const postSaveSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "User",
   },
-  parentImgId: {
+  parentPostId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "UserImg",
+    ref: "Post",
   },
 });
 
-module.exports = mongoose.model("ImgSave", imgSaveSchema);
+module.exports = mongoose.model("PostSave", postSaveSchema);
