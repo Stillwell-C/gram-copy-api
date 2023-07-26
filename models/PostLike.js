@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 
-const imgLikeSchema = new mongoose.Schema({
+const postLikeSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "User",
   },
-  parentImgId: {
+  parentPostId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "UserImg",
+    ref: "Post",
   },
 });
 
-module.exports = mongoose.model("ImgLike", imgLikeSchema);
+module.exports = mongoose.model("PostLike", postLikeSchema);
