@@ -39,12 +39,12 @@ const userSchema = new mongoose.Schema(
     likedImgs: {
       type: [mongoose.Schema.Types.ObjectId],
       default: [],
-      ref: "UserImg",
+      ref: "Post",
     },
     savedImgs: {
       type: [mongoose.Schema.Types.ObjectId],
       default: [],
-      ref: "UserImg",
+      ref: "Post",
     },
     followers: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -55,6 +55,18 @@ const userSchema = new mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       default: [],
       ref: "User",
+    },
+    postNo: {
+      type: Number,
+      default: 0,
+    },
+    followingNo: {
+      type: Number,
+      default: 0,
+    },
+    followersNo: {
+      type: Number,
+      default: 0,
     },
   },
   {
