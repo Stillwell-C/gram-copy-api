@@ -43,6 +43,10 @@ const createFollow = async (req, res) => {
       .json({ message: "Must include a followerID and a followedID" });
   }
 
+  if (followedID === followerID) {
+    return res.status(400).json({ message: "User cannot follow self" });
+  }
+
   const followCheck = await findFollow(followedID, followerID);
 
   if (followCheck) {
