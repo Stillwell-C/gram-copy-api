@@ -3,7 +3,7 @@ const router = express.Router();
 const postLikeController = require("../controllers/postLikeController");
 
 router
-  .route("/post/:id/")
+  .route("/:id/")
   .get(postLikeController.getAllLikedUsers)
   .post(postLikeController.createPostLike)
   .delete(postLikeController.deletePostLike);

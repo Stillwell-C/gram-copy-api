@@ -3,7 +3,7 @@ const router = express.Router();
 const postSaveController = require("../controllers/postSaveController");
 
 router
-  .route("/post/:id/")
+  .route("/:id/")
   .get(postSaveController.getAllSavedUsers)
   .post(postSaveController.createPostSave)
   .delete(postSaveController.deletePostSave);
