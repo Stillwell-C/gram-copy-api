@@ -7,8 +7,8 @@ router
   .post(followController.createFollow)
   .delete(followController.deleteFollow);
 
-router.route("/followers/:id").get(followController.getAllFollowers);
+router.route("/:id/followers").get(followController.getAllFollowers);
 
-router.route("/following/:id").get(followController.getAllFollowing);
+router.route("/:id/following").get(followController.getAllFollowing);
 
 module.exports = router;
