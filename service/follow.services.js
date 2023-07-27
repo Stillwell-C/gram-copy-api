@@ -59,7 +59,7 @@ const findAllFollowing = async (userID, populate = false, page, limit) => {
 };
 
 const createNewFollow = async (followedID, followerID) => {
-  return Follow.create({ followed: followedID, follower: followerID }).exec();
+  return Follow.create({ followed: followedID, follower: followerID });
 };
 
 const findAndDeleteFollow = async (followID) => {

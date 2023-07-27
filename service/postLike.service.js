@@ -65,7 +65,7 @@ const findUsersLikedPosts = async (userID, populate = false, page, limit) => {
 };
 
 const createNewPostLike = async (user, parentPostId) => {
-  return PostLike.create({ user, parentPostId }).exec();
+  return PostLike.create({ user, parentPostId });
 };
 
 const findAndDeletePostLike = async (id) => {

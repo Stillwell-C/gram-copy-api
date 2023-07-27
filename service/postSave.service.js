@@ -65,7 +65,7 @@ const findUsersSavedPosts = async (userID, populate = false, page, limit) => {
 };
 
 const createNewPostSave = async (user, parentPostId) => {
-  return PostSave.create({ user, parentPostId }).exec();
+  return PostSave.create({ user, parentPostId });
 };
 
 const findAndDeletePostSave = async (id) => {
