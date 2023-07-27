@@ -6,6 +6,7 @@ const {
   findFollow,
   findAndDeleteFollow,
 } = require("../service/follow.services");
+const { findAndUpdateUser } = require("../service/user.services");
 
 const getAllFollowers = async (req, res) => {
   const { id } = req.params;
@@ -54,6 +55,28 @@ const createFollow = async (req, res) => {
     return res.status(400).json({ message: "Invalid data recieved" });
   }
 
+  const followerUpdate = await findAndUpdateUser(
+    followerID,
+    { $inc: { followingNo: 1 } },
+    false
+  );
+  const followedUpdate = await findAndUpdateUser(
+    followedID,
+    { $inc: { followerNo: 1 } },
+    false
+  );
+
+  if (!followerUpdate) {
+    return res
+      .status(400)
+      .json({ message: "Following user's following count not updated" });
+  }
+  if (!followedUpdate) {
+    return res
+      .status(400)
+      .json({ message: "Followed user's follower count not updated" });
+  }
+
   return res.status(201).json({ message: "Followed user" });
 };
 
@@ -72,6 +95,28 @@ const deleteFollow = async (req, res) => {
     return res
       .status(400)
       .json({ message: "Could not unfollow user. Please try again." });
+  }
+
+  const followerUpdate = await findAndUpdateUser(
+    followerID,
+    { $inc: { followingNo: -1 } },
+    false
+  );
+  const followedUpdate = await findAndUpdateUser(
+    followedID,
+    { $inc: { followerNo: -1 } },
+    false
+  );
+
+  if (!followerUpdate) {
+    return res
+      .status(400)
+      .json({ message: "Following user's following count not updated" });
+  }
+  if (!followedUpdate) {
+    return res
+      .status(400)
+      .json({ message: "Followed user's follower count not updated" });
   }
 
   return res.json({ message: "Unfollowed user" });
