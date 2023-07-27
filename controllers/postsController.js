@@ -68,15 +68,17 @@ const createNewPost = async (req, res) => {
   const newPost = { user, altText, caption, imgUrl, location };
 
   const createdPost = await createPost(newPost);
+
+  if (!createdPost) {
+    return res.status(400).json({ message: "Invalid data recieved" });
+  }
+
   const updatedUser = await findAndUpdateUser(
     user,
     { $inc: { postNo: 1 } },
     false
   );
 
-  if (!createdPost) {
-    return res.status(400).json({ message: "Invalid data recieved" });
-  }
   if (!updatedUser) {
     //Maybe this should be logged in some way
     return res.status(400).json({ message: "User post count not updated" });
@@ -133,15 +135,17 @@ const deletePost = async (req, res) => {
   }
 
   const deletedPost = await findAndDeletePost(id);
-  const updatedUser = await findAndUpdateUser(
-    id,
-    { $inc: { postNo: 1 } },
-    false
-  );
 
   if (!deletedPost) {
     return res.status(400).json({ message: "Post not found" });
   }
+
+  const updatedUser = await findAndUpdateUser(
+    id,
+    { $inc: { postNo: -1 } },
+    false
+  );
+
   if (!updatedUser) {
     //Maybe this should be logged in some way
     return res.status(400).json({ message: "User post count not updated" });
