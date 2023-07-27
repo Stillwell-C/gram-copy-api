@@ -34,7 +34,8 @@ const getUsersLikedPosts = async (req, res) => {
 };
 
 const createPostLike = async (req, res) => {
-  const { userID, parentPostID } = req.body;
+  const { userID } = req.body;
+  const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
     return res
@@ -69,7 +70,8 @@ const createPostLike = async (req, res) => {
 };
 
 const deletePostLike = async (req, res) => {
-  const { userID, parentPostID } = req.body;
+  const { userID } = req.body;
+  const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
     return res
@@ -79,8 +81,8 @@ const deletePostLike = async (req, res) => {
 
   const postLike = await findPostLike(userID, parentPostID);
 
-  if (postLike) {
-    return res.status(400).json({ message: "Already liked this post" });
+  if (!postLike) {
+    return res.status(400).json({ message: "You have not liked this post" });
   }
 
   const deletedPostLike = await findAndDeletePostLike(postLike._id);

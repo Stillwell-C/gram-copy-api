@@ -33,7 +33,8 @@ const getUsersSavedPosts = async (req, res) => {
 };
 
 const createPostSave = async (req, res) => {
-  const { userID, parentPostID } = req.body;
+  const { userID } = req.body;
+  const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
     return res
@@ -57,7 +58,8 @@ const createPostSave = async (req, res) => {
 };
 
 const deletePostSave = async (req, res) => {
-  const { userID, parentPostID } = req.body;
+  const { userID } = req.body;
+  const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
     return res
@@ -67,8 +69,8 @@ const deletePostSave = async (req, res) => {
 
   const postSave = await findPostSave(userID, parentPostID);
 
-  if (postSave) {
-    return res.status(400).json({ message: "Already saved this post" });
+  if (!postSave) {
+    return res.status(400).json({ message: "You have not saved this post." });
   }
 
   const deletedPostSave = await findAndDeletePostSave(postSave._id);
