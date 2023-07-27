@@ -7,7 +7,7 @@ const {
   findAndUpdatePost,
   findAndDeletePost,
 } = require("../service/post.services");
-const { findUserById } = require("../service/user.services");
+const { findUserById, findAndUpdateUser } = require("../service/user.services");
 
 const getPost = async (req, res) => {
   if (!req?.params?.id) {
@@ -68,12 +68,21 @@ const createNewPost = async (req, res) => {
   const newPost = { user, altText, caption, imgUrl, location };
 
   const createdPost = await createPost(newPost);
+  const updatedUser = await findAndUpdateUser(
+    user,
+    { $inc: { postNo: 1 } },
+    false
+  );
 
-  if (createdPost) {
-    res.status(201).json({ message: "New post created" });
-  } else {
-    res.status(400).json({ message: "Invalid data recieved" });
+  if (!createdPost) {
+    return res.status(400).json({ message: "Invalid data recieved" });
   }
+  if (!updatedUser) {
+    //Maybe this should be logged in some way
+    return res.status(400).json({ message: "User post count not updated" });
+  }
+
+  res.status(201).json({ message: "New post created" });
 };
 
 const updatePost = async (req, res) => {
@@ -124,9 +133,18 @@ const deletePost = async (req, res) => {
   }
 
   const deletedPost = await findAndDeletePost(id);
+  const updatedUser = await findAndUpdateUser(
+    id,
+    { $inc: { postNo: 1 } },
+    false
+  );
 
   if (!deletedPost) {
     return res.status(400).json({ message: "Post not found" });
+  }
+  if (!updatedUser) {
+    //Maybe this should be logged in some way
+    return res.status(400).json({ message: "User post count not updated" });
   }
 
   res.json({ message: `Deleted post ${deletedPost._id}` });
