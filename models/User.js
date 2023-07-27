@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    followersNo: {
+    followerNo: {
       type: Number,
       default: 0,
     },
