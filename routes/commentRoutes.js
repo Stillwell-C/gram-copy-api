@@ -8,3 +8,5 @@ router
   .delete(commentsController.deleteComment);
 
 router.route("/:id").get(commentsController.getComment);
+
+module.exports = router;
