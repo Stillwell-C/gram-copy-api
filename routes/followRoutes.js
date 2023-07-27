@@ -10,3 +10,5 @@ router
 router.route("/followers/:id").get(followController.getAllFollowers);
 
 router.route("/following/:id").get(followController.getAllFollowing);
+
+module.exports = router;
