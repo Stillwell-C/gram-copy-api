@@ -36,26 +36,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    likedImgs: {
-      type: [mongoose.Schema.Types.ObjectId],
-      default: [],
-      ref: "Post",
-    },
-    savedImgs: {
-      type: [mongoose.Schema.Types.ObjectId],
-      default: [],
-      ref: "Post",
-    },
-    followers: {
-      type: [mongoose.Schema.Types.ObjectId],
-      default: [],
-      ref: "User",
-    },
-    following: {
-      type: [mongoose.Schema.Types.ObjectId],
-      default: [],
-      ref: "User",
-    },
     postNo: {
       type: Number,
       default: 0,
