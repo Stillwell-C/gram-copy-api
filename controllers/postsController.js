@@ -141,7 +141,7 @@ const deletePost = async (req, res) => {
   }
 
   const updatedUser = await findAndUpdateUser(
-    id,
+    deletedPost.user,
     { $inc: { postNo: -1 } },
     false
   );
