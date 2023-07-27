@@ -9,4 +9,6 @@ router
 
 router.route("/:id").get(commentsController.getComment);
 
+router.route("/post/:id").get(commentsController.getPostComments);
+
 module.exports = router;
