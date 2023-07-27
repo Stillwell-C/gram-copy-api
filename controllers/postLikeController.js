@@ -1,3 +1,4 @@
+const { findAndUpdatePost } = require("../service/post.services");
 const {
   findAllLikedUsers,
   findUsersLikedPosts,
@@ -48,9 +49,18 @@ const createPostLike = async (req, res) => {
   }
 
   const postLike = await createNewPostLike(userID, parentPostID);
+  const updatePost = await findAndUpdatePost(
+    parentPostID,
+    { $inc: { likes: 1 } },
+    false
+  );
 
   if (!postLike) {
     return res.status(400).json({ message: "Invalid data recieved" });
+  }
+  if (!updatePost) {
+    //Maybe this should be logged in some way
+    return res.status(400).json({ message: "Post like count not updated" });
   }
 
   return res.status(201).json({ message: "Liked post" });
@@ -72,11 +82,20 @@ const deletePostLike = async (req, res) => {
   }
 
   const deletedPostLike = await findAndDeletePostLike(postLike._id);
+  const updatePost = await findAndUpdatePost(
+    parentPostID,
+    { $inc: { likes: -1 } },
+    false
+  );
 
   if (!deletedPostLike) {
     return res
       .status(400)
       .json({ message: "Could not unlike post. Please try again." });
+  }
+  if (!updatePost) {
+    //Maybe this should be logged in some way
+    return res.status(400).json({ message: "Post like count not updated" });
   }
 
   return res.json({ message: "Unliked post" });
