@@ -7,6 +7,7 @@ const {
   verifyJWTAndReturnUser,
 } = require("../service/auth.services");
 const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
+const { generateSignature } = require("../service/cloudinary.services");
 
 const login = async (req, res) => {
   const { userIdentifier, password } = req.body;
@@ -98,4 +99,10 @@ const logout = (req, res) => {
   res.json({ message: "Cookie cleared" });
 };
 
-module.exports = { login, refresh, logout };
+const getImgCloudSignature = async (req, res) => {
+  const timestamp = Math.round(new Date().getTime() / 1000);
+  const signature = generateSignature(timestamp);
+  res.json({ timestamp, signature });
+};
+
+module.exports = { login, refresh, logout, getImgCloudSignature };
