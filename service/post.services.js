@@ -23,14 +23,14 @@ const findMultiplePosts = async (page, limit, queryArr) => {
       .skip(postSkip)
       .lean()
       .select("-likedUsers")
-      .populate("author", "_id username")
+      .populate("user", "_id username")
       .exec();
   } else {
     return Post.find(query)
       .sort("-createdAt")
       .lean()
       .select("-likedUsers")
-      .populate("author", "_id username")
+      .populate("user", "_id username")
       .exec();
   }
 };
