@@ -35,7 +35,7 @@ const getMultiplePosts = async (req, res) => {
 
   const posts = await findMultiplePosts(page, limit, queryArr);
 
-  const totalPosts = countPosts(queryArr);
+  const totalPosts = await countPosts(queryArr);
 
   if (!posts?.length)
     return res.status(400).json({ message: "No posts found" });
@@ -45,6 +45,8 @@ const getMultiplePosts = async (req, res) => {
 
 const createNewPost = async (req, res) => {
   const { user, altText, caption, imgData, location } = req.body;
+
+  console.log(req.body);
 
   if (!imgData?.public_id || !imgData?.version || !imgData?.signature) {
     return res
