@@ -9,4 +9,6 @@ router.route("/refresh").get(authController.refresh);
 
 router.route("/logout").post(authController.logout);
 
+router.route("/cloud-signature").get(authController.getImgCloudSignature);
+
 module.exports = router;
