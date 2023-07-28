@@ -48,7 +48,12 @@ const createNewPost = async (req, res) => {
 
   console.log(req.body);
 
-  if (!imgData?.public_id || !imgData?.version || !imgData?.signature) {
+  if (
+    !imgData?.public_id ||
+    !imgData?.version ||
+    !imgData?.signature ||
+    !imgData?.format
+  ) {
     return res
       .status(400)
       .json({ message: "Post must include all necessary image data." });
@@ -84,7 +89,7 @@ const createNewPost = async (req, res) => {
     altText,
     caption,
     location,
-    imgKey: imgData.public_id,
+    imgKey: `${imgData.public_id}.${imgData.format}`,
   };
 
   const createdPost = await createPost(newPost);
