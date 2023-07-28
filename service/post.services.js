@@ -1,7 +1,10 @@
 const Post = require("../models/Post");
 
 const findPost = async (query) => {
-  return Post.findOne(query).lean().populate("user", "_id username").exec();
+  return Post.findOne(query)
+    .lean()
+    .populate("user", "_id username userImgKey")
+    .exec();
 };
 
 const findMultiplePosts = async (page, limit, queryArr) => {
