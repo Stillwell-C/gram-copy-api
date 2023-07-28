@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const { generateExpectedSignature } = require("../service/cloudinary.services");
 const {
   findPost,
   countPosts,
@@ -43,12 +44,23 @@ const getMultiplePosts = async (req, res) => {
 };
 
 const createNewPost = async (req, res) => {
-  const { user, altText, caption, imgUrl, location } = req.body;
+  const { user, altText, caption, imgData, location } = req.body;
 
-  if (!imgUrl) {
+  if (!imgData?.public_id || !imgData?.version || !imgData?.signature) {
     return res
       .status(400)
-      .json({ message: "Post must include URL for image." });
+      .json({ message: "Post must include all necessary image data." });
+  }
+
+  const expectedCloudinarySignature = generateExpectedSignature(
+    imgData.public_id,
+    imgData.version
+  );
+
+  if (expectedCloudinarySignature !== imgData.signature) {
+    return res
+      .status(401)
+      .json({ message: "Invalid image signature provided." });
   }
 
   if (!user) {
@@ -65,7 +77,13 @@ const createNewPost = async (req, res) => {
     });
   }
 
-  const newPost = { user, altText, caption, imgUrl, location };
+  const newPost = {
+    user,
+    altText,
+    caption,
+    location,
+    imgKey: imgData.public_id,
+  };
 
   const createdPost = await createPost(newPost);
 
