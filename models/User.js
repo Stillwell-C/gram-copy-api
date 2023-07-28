@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     userImgKey: {
       type: String,
-      default: "",
+      default: "Default_pfp_k1yn4m.svg",
     },
     userBio: {
       type: String,
