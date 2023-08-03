@@ -45,7 +45,13 @@ const login = async (req, res) => {
     await consecutivePasswordFailLimiter.delete(user.username);
   }
 
-  const accessToken = generateAccessToken(user.username, user.roles, user._id);
+  const accessToken = generateAccessToken(
+    user.username,
+    user.roles,
+    user._id,
+    user.userImgKey,
+    user.fullname
+  );
 
   const refreshToken = generateRefreshToken(user.username);
 
@@ -83,10 +89,11 @@ const refresh = async (req, res) => {
   }
 
   const accessToken = generateAccessToken(
-    verifiedUser.username,
-    verifiedUser.roles,
-    verifiedUser._id,
-    verifiedUser.userImgURL
+    verifiedUser?.username,
+    verifiedUser?.roles,
+    verifiedUser?._id,
+    verifiedUser?.userImgKey,
+    verifiedUser?.fullname
   );
 
   res.json({ accessToken });

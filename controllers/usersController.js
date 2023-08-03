@@ -180,7 +180,8 @@ const updateUserInfo = async (req, res) => {
     updatedUser.username,
     updatedUser.roles,
     updatedUser._id,
-    updatedUser.userImgURL
+    updatedUser.userImgKey,
+    updatedUser.fullname
   );
 
   res.json({ accessToken });

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { findUserByUsernameWithoutPassword } = require("./user.services");
 require("dotenv").config();
 
-const generateAccessToken = (username, roles, id, img) => {
+const generateAccessToken = (username, roles, id, img, fullname) => {
   return jwt.sign(
     {
       UserInfo: {
@@ -11,6 +11,7 @@ const generateAccessToken = (username, roles, id, img) => {
         roles,
         id,
         img,
+        fullname,
       },
     },
     process.env.ACCESS_TOKEN_CODE,
