@@ -38,6 +38,31 @@ const findMultiplePosts = async (page, limit, queryArr) => {
   }
 };
 
+const findTaggedPosts = async (userID, page, limit) => {
+  if (page || limit) {
+    const pageInt = parseInt(page) || 1;
+    const limitInt = parseInt(limit) || 6;
+
+    const postSkip = (pageInt - 1) * limitInt;
+
+    return Post.find({ taggedUsers: userID })
+      .sort("-createdAt")
+      .limit(limitInt)
+      .skip(postSkip)
+      .lean()
+      .select("-likedUsers")
+      .populate("user", "_id username userImgKey")
+      .exec();
+  } else {
+    return Post.find({ taggedUsers: userID })
+      .sort("-createdAt")
+      .lean()
+      .select("-likedUsers")
+      .populate("user", "_id username userImgKey")
+      .exec();
+  }
+};
+
 const createPost = async (postData) => {
   return Post.create(postData);
 };
@@ -76,11 +101,17 @@ const countPosts = async (queryArr) => {
   }
 };
 
+const countTaggedPosts = async (userID) => {
+  return Post.countDocuments({ taggedUsers: userID });
+};
+
 module.exports = {
   findPost,
   findMultiplePosts,
+  findTaggedPosts,
   createPost,
   findAndUpdatePost,
   findAndDeletePost,
   countPosts,
+  countTaggedPosts,
 };
