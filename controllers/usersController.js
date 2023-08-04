@@ -3,23 +3,31 @@ const {
   hashPassword,
   generateAccessToken,
 } = require("../service/auth.services");
+const { checkValidObjectID } = require("../service/mongoose.services");
 const {
-  findUserById,
   duplicateEmailCheck,
   duplicateUsernameCheck,
   generateNewUser,
   findAndUpdateUser,
-  findAndUpdateArr,
   findAndDeleteUser,
   findMultipleUsers,
-  findUser,
+  findUserById,
+  findUserByUsernameWithoutPassword,
 } = require("../service/user.services");
 
 const getUser = async (req, res) => {
   if (!req?.params?.id)
-    return res.status(400).json({ message: "User ID required" });
+    return res.status(400).json({ message: "User ID or username required" });
 
-  const user = await findUserById(req.params.id);
+  const idParse = checkValidObjectID(req.params.id);
+
+  let user;
+  if (idParse) {
+    user = await findUserById(req.params.id);
+  }
+  if (!user) {
+    user = await findUserByUsernameWithoutPassword(req.params.id);
+  }
 
   if (!user) {
     return res.status(400).json({ message: `User not found` });
