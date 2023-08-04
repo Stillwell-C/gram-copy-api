@@ -31,6 +31,15 @@ const postSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    taggedUsers: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+      validate: [
+        (arr) => arr.lenth <= 20,
+        "Tagged Users exceeds maximum of 20",
+      ],
+    },
   },
   { timestamps: true }
 );
