@@ -7,6 +7,7 @@ const {
   createPost,
   findAndUpdatePost,
   findAndDeletePost,
+  countTaggedPosts,
 } = require("../service/post.services");
 const { findUserById, findAndUpdateUser } = require("../service/user.services");
 
@@ -27,15 +28,28 @@ const getMultiplePosts = async (req, res) => {
   const { page, limit, userID, feedID } = req.query;
 
   let queryArr = [];
-  if (feedID) {
+  if (feedID.length) {
     //Some logic to make Arr of followers
-  } else if (userID) {
-    queryArr = [userID];
+  } else if (userID.length) {
+    queryArr.push(userID);
   }
 
   const posts = await findMultiplePosts(page, limit, queryArr);
 
   const totalPosts = await countPosts(queryArr);
+
+  if (!posts?.length)
+    return res.status(400).json({ message: "No posts found" });
+
+  res.json({ posts, totalPosts });
+};
+
+const getTaggedPosts = async (req, res) => {
+  const { page, limit, userID } = req.query;
+
+  const posts = await findMultiplePosts(page, limit, userID);
+
+  const totalPosts = await countTaggedPosts(userID);
 
   if (!posts?.length)
     return res.status(400).json({ message: "No posts found" });
@@ -182,6 +196,7 @@ const deletePost = async (req, res) => {
 module.exports = {
   getPost,
   getMultiplePosts,
+  getTaggedPosts,
   createNewPost,
   updatePost,
   deletePost,
