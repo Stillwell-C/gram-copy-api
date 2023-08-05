@@ -8,6 +8,7 @@ const {
   findAndUpdatePost,
   findAndDeletePost,
   countTaggedPosts,
+  findTaggedPosts,
 } = require("../service/post.services");
 const { findUserById, findAndUpdateUser } = require("../service/user.services");
 
@@ -45,9 +46,14 @@ const getMultiplePosts = async (req, res) => {
 };
 
 const getTaggedPosts = async (req, res) => {
-  const { page, limit, userID } = req.query;
+  const { page, limit } = req.query;
+  const { userID } = req.params;
 
-  const posts = await findMultiplePosts(page, limit, userID);
+  if (!userID) {
+    return res.status(400).json({ message: "Must include userID" });
+  }
+
+  const posts = await findTaggedPosts(userID, page, limit);
 
   const totalPosts = await countTaggedPosts(userID);
 
