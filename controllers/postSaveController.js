@@ -5,19 +5,22 @@ const {
   createNewPostSave,
   findAndDeletePostSave,
   countUsersSavedPosts,
+  countUsersWhoSavedPost,
 } = require("../service/postSave.service");
 
 const getAllSavedUsers = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
 
-  const followers = await findAllSavedUsers(id, true, page, limit);
+  const savedUsers = await findAllSavedUsers(id, true, page, limit);
 
-  if (!followers) {
+  if (!savedUsers) {
     return res.status(400).json({ message: "No saved users found" });
   }
 
-  return res.json(followers);
+  const totalSavedUsers = await countUsersWhoSavedPost(id);
+
+  return res.json({ savedUsers, totalSavedUsers });
 };
 
 const getUsersSavedPosts = async (req, res) => {
