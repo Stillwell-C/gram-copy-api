@@ -41,7 +41,7 @@ const findMultiplePosts = async (page, limit, queryArr) => {
 const findTaggedPosts = async (userID, page, limit) => {
   if (page || limit) {
     const pageInt = parseInt(page) || 1;
-    const limitInt = parseInt(limit) || 6;
+    const limitInt = parseInt(limit) || 12;
 
     const postSkip = (pageInt - 1) * limitInt;
 
