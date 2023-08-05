@@ -76,6 +76,10 @@ const countUsersSavedPosts = async (userID) => {
   return PostSave.countDocuments({ user: userID });
 };
 
+const countUsersWhoSavedPost = async (postID) => {
+  return PostSave.countDocuments({ post: postID });
+};
+
 module.exports = {
   findPostSave,
   findAllSavedUsers,
@@ -83,4 +87,5 @@ module.exports = {
   createNewPostSave,
   findAndDeletePostSave,
   countUsersSavedPosts,
+  countUsersWhoSavedPost,
 };
