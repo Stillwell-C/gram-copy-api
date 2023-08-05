@@ -4,6 +4,7 @@ const {
   findPostSave,
   createNewPostSave,
   findAndDeletePostSave,
+  countUsersSavedPosts,
 } = require("../service/postSave.service");
 
 const getAllSavedUsers = async (req, res) => {
@@ -29,7 +30,9 @@ const getUsersSavedPosts = async (req, res) => {
     return res.status(400).json({ message: "No saved posts found" });
   }
 
-  return res.json(savedPosts);
+  const totalSavedPosts = await countUsersSavedPosts(id);
+
+  return res.json({ posts: savedPosts, totalPosts: totalSavedPosts });
 };
 
 const createPostSave = async (req, res) => {
