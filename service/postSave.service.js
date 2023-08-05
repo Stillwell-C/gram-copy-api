@@ -1,7 +1,7 @@
 const PostSave = require("../models/PostSave");
 
-const findPostSave = async (user, parentPostId) => {
-  return PostSave.findOne({ user, parentPostId }).exec();
+const findPostSave = async (user, post) => {
+  return PostSave.findOne({ user, post }).exec();
 };
 
 const findAllSavedUsers = async (postID, populate = false, page, limit) => {
@@ -12,24 +12,24 @@ const findAllSavedUsers = async (postID, populate = false, page, limit) => {
 
       const skip = (pageInt - 1) * limitInt;
 
-      return PostSave.find({ parentPostId: postID })
+      return PostSave.find({ post: postID })
         .sort("createdAt")
         .limit(limitInt)
         .skip(skip)
         .populate("user", "_id username")
-        .select("-parentPostId")
+        .select("-post")
         .lean();
     }
 
-    return PostSave.find({ parentPostId: postID })
+    return PostSave.find({ post: postID })
       .sort("createdAt")
       .populate("user", "_id username")
-      .select("-parentPostId")
+      .select("-post")
       .lean();
   } else {
-    return PostSave.find({ parentPostId: postID })
+    return PostSave.find({ post: postID })
       .sort("createdAt")
-      .select("-parentPostId")
+      .select("-post")
       .lean();
   }
 };
@@ -46,14 +46,14 @@ const findUsersSavedPosts = async (userID, populate = false, page, limit) => {
         .sort("createdAt")
         .limit(limitInt)
         .skip(skip)
-        .populate("parentPostId", "_id")
+        .populate("post")
         .select("-user")
         .lean();
     }
 
     return PostSave.find({ user: userID })
       .sort("createdAt")
-      .populate("parentPostId", "_id")
+      .populate("post", "_id")
       .select("-user")
       .lean();
   } else {
@@ -64,12 +64,16 @@ const findUsersSavedPosts = async (userID, populate = false, page, limit) => {
   }
 };
 
-const createNewPostSave = async (user, parentPostId) => {
-  return PostSave.create({ user, parentPostId });
+const createNewPostSave = async (user, post) => {
+  return PostSave.create({ user, post });
 };
 
 const findAndDeletePostSave = async (id) => {
   return PostSave.findByIdAndDelete(id);
+};
+
+const countUsersSavedPosts = async (userID) => {
+  return PostSave.countDocuments({ user: userID });
 };
 
 module.exports = {
@@ -78,4 +82,5 @@ module.exports = {
   findUsersSavedPosts,
   createNewPostSave,
   findAndDeletePostSave,
+  countUsersSavedPosts,
 };
