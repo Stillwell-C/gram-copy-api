@@ -29,7 +29,7 @@ const findMultiplePosts = async (page, limit, queryArr) => {
       .populate("user", "_id username userImgKey")
       .exec();
   } else {
-    return Post.find(query)
+    return Post.find()
       .sort("-createdAt")
       .lean()
       .select("-likedUsers")
