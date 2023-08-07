@@ -39,9 +39,14 @@ const findAndDeleteComment = async (id) => {
   return Comment.findByIdAndDelete(id).exec();
 };
 
+const countComments = async (parentPostId) => {
+  return Comment.countDocuments({ parentPostId });
+};
+
 module.exports = {
   findCommentById,
   findPostComments,
   createNewComment,
   findAndDeleteComment,
+  countComments,
 };
