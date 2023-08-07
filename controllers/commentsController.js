@@ -3,6 +3,7 @@ const {
   findCommentById,
   createNewComment,
   findAndDeleteComment,
+  findPostComments,
 } = require("../service/comment.services");
 
 const getComment = async (req, res) => {
