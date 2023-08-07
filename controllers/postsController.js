@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const { generateExpectedSignature } = require("../service/cloudinary.services");
+const { countComments } = require("../service/comment.services");
 const {
   findPost,
   countPosts,
@@ -10,28 +11,41 @@ const {
   countTaggedPosts,
   findTaggedPosts,
 } = require("../service/post.services");
+const { findPostLike } = require("../service/postLike.service");
+const { findPostSave } = require("../service/postSave.service");
 const { findUserById, findAndUpdateUser } = require("../service/user.services");
 
 const getPost = async (req, res) => {
   if (!req?.params?.id) {
     return res.status(400).json({ message: "Post ID required" });
   }
+
+  const userID = req?.query?.userID;
+
   const post = await findPost({ _id: req.params.id });
 
   if (!post) {
     return res.status(400).json({ message: "Post not found" });
   }
 
+  if (userID.length) {
+    const like = await findPostLike(userID, post._id);
+    const save = await findPostSave(userID, post._id);
+
+    post.isLiked = like ? true : false;
+    post.isSaved = save ? true : false;
+  }
+
   return res.json(post);
 };
 
 const getMultiplePosts = async (req, res) => {
-  const { page, limit, userID, feedID } = req.query;
+  const { page, limit, userID, feedID, reqID } = req.query;
 
   let queryArr = [];
-  if (feedID.length) {
+  if (feedID?.length) {
     //Some logic to make Arr of followers
-  } else if (userID.length) {
+  } else if (userID?.length) {
     queryArr.push(userID);
   }
 
@@ -41,6 +55,24 @@ const getMultiplePosts = async (req, res) => {
 
   if (!posts?.length)
     return res.status(400).json({ message: "No posts found" });
+
+  //This works but has slowed down process. May be unavoidable
+  if (feedID?.length || reqID?.length) {
+    const userReqID = reqID.length ? reqID : feedID;
+
+    for (const post of posts) {
+      const like = await findPostLike(userReqID, post._id);
+      const save = await findPostSave(userReqID, post._id);
+
+      post.isLiked = like ? true : false;
+      post.isSaved = save ? true : false;
+    }
+  }
+
+  for (const post of posts) {
+    const totalComments = await countComments(post._id);
+    post.totalComments = totalComments;
+  }
 
   res.json({ posts, totalPosts });
 };
