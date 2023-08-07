@@ -1,7 +1,10 @@
 const Comment = require("../models/Comment");
 
 const findCommentById = async (id) => {
-  return Comment.findById(id).lean().populate("author", "_id username").exec();
+  return Comment.findById(id)
+    .lean()
+    .populate("author", "_id username userImgKey")
+    .exec();
 };
 
 const findPostComments = async (page, limit, postId) => {
@@ -16,13 +19,13 @@ const findPostComments = async (page, limit, postId) => {
       .limit(limitInt)
       .skip(commentsSkip)
       .lean()
-      .populate("author", "_id username")
+      .populate("author", "_id username userImgKey")
       .exec();
   } else {
     return Comment.find({ parentPostId: postId })
       .sort("createdAt")
       .lean()
-      .populate("author", "_id username")
+      .populate("author", "_id username userImgKey")
       .exec();
   }
 };
