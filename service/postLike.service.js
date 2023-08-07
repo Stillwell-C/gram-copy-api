@@ -1,7 +1,7 @@
 const PostLike = require("../models/PostLike");
 
-const findPostLike = async (user, parentPostId) => {
-  return PostLike.findOne({ user, parentPostId }).exec();
+const findPostLike = async (user, post) => {
+  return PostLike.findOne({ user, post }).exec();
 };
 
 const findAllLikedUsers = async (postID, populate = false, page, limit) => {
@@ -12,24 +12,24 @@ const findAllLikedUsers = async (postID, populate = false, page, limit) => {
 
       const skip = (pageInt - 1) * limitInt;
 
-      return PostLike.find({ parentPostId: postID })
+      return PostLike.find({ post: postID })
         .sort("createdAt")
         .limit(limitInt)
         .skip(skip)
         .populate("user", "_id username")
-        .select("-parentPostId")
+        .select("-post")
         .lean();
     }
 
-    return PostLike.find({ parentPostId: postID })
+    return PostLike.find({ post: postID })
       .sort("createdAt")
       .populate("user", "_id username")
-      .select("-parentPostId")
+      .select("-post")
       .lean();
   } else {
-    return PostLike.find({ parentPostId: postID })
+    return PostLike.find({ post: postID })
       .sort("createdAt")
-      .select("-parentPostId")
+      .select("-post")
       .lean();
   }
 };
@@ -46,14 +46,14 @@ const findUsersLikedPosts = async (userID, populate = false, page, limit) => {
         .sort("createdAt")
         .limit(limitInt)
         .skip(skip)
-        .populate("parentPostId", "_id")
+        .populate("post", "_id")
         .select("-user")
         .lean();
     }
 
     return PostLike.find({ user: userID })
       .sort("createdAt")
-      .populate("parentPostId", "_id")
+      .populate("post", "_id")
       .select("-user")
       .lean();
   } else {
@@ -64,8 +64,8 @@ const findUsersLikedPosts = async (userID, populate = false, page, limit) => {
   }
 };
 
-const createNewPostLike = async (user, parentPostId) => {
-  return PostLike.create({ user, parentPostId });
+const createNewPostLike = async (user, post) => {
+  return PostLike.create({ user, post });
 };
 
 const findAndDeletePostLike = async (id) => {
