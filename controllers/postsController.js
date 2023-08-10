@@ -74,6 +74,11 @@ const getMultiplePosts = async (req, res) => {
     post.totalComments = totalComments;
   }
 
+  if (page && limit) {
+    const totalPages = Math.ceil(totalPosts / limit);
+    return res.json({ posts, totalPosts, limit, totalPages });
+  }
+
   res.json({ posts, totalPosts });
 };
 
