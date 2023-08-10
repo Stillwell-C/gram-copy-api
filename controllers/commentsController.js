@@ -38,6 +38,11 @@ const getPostComments = async (req, res) => {
 
   if (!comments) return res.status(400).json({ message: "No comments found" });
 
+  if (page && limit) {
+    const totalPages = Math.ceil(totalComments / limit);
+    return res.json({ comments, totalComments, limit, totalPages });
+  }
+
   res.json({ comments, totalComments });
 };
 
