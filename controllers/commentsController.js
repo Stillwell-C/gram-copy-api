@@ -59,6 +59,17 @@ const createComment = async (req, res) => {
     commentBody
   );
 
+  const updatePost = await findAndUpdatePost(
+    parentPostId,
+    { $inc: { comments: 1 } },
+    false
+  );
+
+  if (!updatePost) {
+    //Maybe this should be logged in some way
+    return res.status(400).json({ message: "Post comment count not updated" });
+  }
+
   if (createdComment) {
     res
       .status(200)
@@ -79,6 +90,17 @@ const deleteComment = async (req, res) => {
 
   if (!deletedComment) {
     return res.status(400).json({ message: "Comment not found" });
+  }
+
+  const updatePost = await findAndUpdatePost(
+    parentPostId,
+    { $inc: { comments: -1 } },
+    false
+  );
+
+  if (!updatePost) {
+    //Maybe this should be logged in some way
+    return res.status(400).json({ message: "Post comment count not updated" });
   }
 
   res.json({ message: `Deleted comment ${deletedComment._id}` });
