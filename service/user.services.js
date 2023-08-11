@@ -35,6 +35,16 @@ const findMultipleUsers = async (page, limit) => {
   }
 };
 
+const searchUser = async (searchQuery) => {
+  return User.find({
+    $or: [
+      { fullname: { $regex: searchQuery, $options: "i" } },
+      { username: { $regex: searchQuery, $options: "i" } },
+      { email: { $regex: searchQuery, $options: "i" } },
+    ],
+  });
+};
+
 const duplicateUsernameCheck = async (username) => {
   return User.findOne({ username })
     .collation({ locale: "en", strength: 2 })
@@ -71,6 +81,7 @@ module.exports = {
   findUserById,
   findUserByUsernameWithoutPassword,
   findMultipleUsers,
+  searchUser,
   duplicateUsernameCheck,
   duplicateEmailCheck,
   generateNewUser,
