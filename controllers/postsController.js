@@ -92,6 +92,19 @@ const getTaggedPosts = async (req, res) => {
   if (!posts?.length)
     return res.status(400).json({ message: "No posts found" });
 
+  for (const post of posts) {
+    const like = await findPostLike(userID, post._id);
+    const save = await findPostSave(userID, post._id);
+
+    post.isLiked = like ? true : false;
+    post.isSaved = save ? true : false;
+  }
+
+  if (page && limit) {
+    const totalPages = Math.ceil(totalPosts / limit);
+    return res.json({ posts, totalPosts, limit, totalPages });
+  }
+
   res.json({ posts, totalPosts });
 };
 
