@@ -47,13 +47,29 @@ const findUsersSavedPosts = async (userID, populate = false, page, limit) => {
         .limit(limitInt)
         .skip(skip)
         .populate("post")
+        .populate({
+          path: "post",
+          populate: {
+            path: "user",
+            model: "User",
+            select: "_id username userImgKey",
+          },
+        })
         .select("-user")
         .lean();
     }
 
     return PostSave.find({ user: userID })
       .sort("createdAt")
-      .populate("post", "_id")
+      .populate("post")
+      .populate({
+        path: "post",
+        populate: {
+          path: "user",
+          model: "User",
+          select: "_id username userImgKey",
+        },
+      })
       .select("-user")
       .lean();
   } else {
