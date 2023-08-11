@@ -1,5 +1,8 @@
 const Post = require("../models/Post");
-const { generateExpectedSignature } = require("../service/cloudinary.services");
+const {
+  generateExpectedSignature,
+  deleteImageFromCloudinary,
+} = require("../service/cloudinary.services");
 const { countComments } = require("../service/comment.services");
 const {
   findPost,
@@ -78,7 +81,7 @@ const getMultiplePosts = async (req, res) => {
 };
 
 const getTaggedPosts = async (req, res) => {
-  const { page, limit } = req.query;
+  const { page, limit, reqID } = req.query;
   const { userID } = req.params;
 
   if (!userID) {
@@ -92,12 +95,14 @@ const getTaggedPosts = async (req, res) => {
   if (!posts?.length)
     return res.status(400).json({ message: "No posts found" });
 
-  for (const post of posts) {
-    const like = await findPostLike(userID, post._id);
-    const save = await findPostSave(userID, post._id);
+  if (reqID) {
+    for (const post of posts) {
+      const like = await findPostLike(reqID, post._id);
+      const save = await findPostSave(reqID, post._id);
 
-    post.isLiked = like ? true : false;
-    post.isSaved = save ? true : false;
+      post.isLiked = like ? true : false;
+      post.isSaved = save ? true : false;
+    }
   }
 
   if (page && limit) {
@@ -218,10 +223,14 @@ const updatePost = async (req, res) => {
 };
 
 const deletePost = async (req, res) => {
-  const { id } = req.body;
+  const { id, imgKey } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "Post ID required" });
+  }
+
+  if (!imgKey) {
+    return res.status(400).json({ message: "Img Key required" });
   }
 
   const deletedPost = await findAndDeletePost(id);
@@ -240,6 +249,10 @@ const deletePost = async (req, res) => {
     //Maybe this should be logged in some way
     return res.status(400).json({ message: "User post count not updated" });
   }
+
+  const [publicKey] = imgKey.split(".");
+
+  deleteImageFromCloudinary(publicKey);
 
   res.json({ message: `Deleted post ${deletedPost._id}` });
 };
