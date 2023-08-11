@@ -11,4 +11,6 @@ router
 
 router.route("/:id").get(usersController.getUser);
 
+router.route("/search/:searchQuery").get(usersController.searchUsers);
+
 module.exports = router;
