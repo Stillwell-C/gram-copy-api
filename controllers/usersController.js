@@ -13,6 +13,7 @@ const {
   findMultipleUsers,
   findUserById,
   findUserByUsernameWithoutPassword,
+  searchUser,
 } = require("../service/user.services");
 
 const getUser = async (req, res) => {
@@ -45,6 +46,21 @@ const getAllUsers = async (req, res) => {
   if (!users) return res.status(400).json({ message: "No users found" });
 
   res.json({ users, totalUsers });
+};
+
+const searchUsers = async (req, res) => {
+  const { searchQuery } = req.params;
+
+  if (!searchQuery)
+    return res.status(400).json({ message: "Search query required" });
+
+  const results = await searchUser(searchQuery);
+
+  console.log(results);
+
+  if (!results) return res.status(404).json({ message: "No results found" });
+
+  res.json({ users: results });
 };
 
 const createNewUser = async (req, res) => {
@@ -220,6 +236,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getUser,
   getAllUsers,
+  searchUsers,
   createNewUser,
   updateUserInfo,
   deleteUser,
