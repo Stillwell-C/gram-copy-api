@@ -1,3 +1,4 @@
+const { findPostLike } = require("../service/postLike.service");
 const {
   findAllSavedUsers,
   findUsersSavedPosts,
@@ -33,7 +34,24 @@ const getUsersSavedPosts = async (req, res) => {
     return res.status(400).json({ message: "No saved posts found" });
   }
 
+  for (const post of savedPosts) {
+    const like = await findPostLike(id, post._id);
+
+    post.isLiked = like;
+    post.isSaved = true;
+  }
+
   const totalSavedPosts = await countUsersSavedPosts(id);
+
+  if (page && limit) {
+    const totalPages = Math.ceil(totalPosts / limit);
+    return res.json({
+      posts: savedPosts,
+      totalPosts: totalSavedPosts,
+      limit,
+      totalPages,
+    });
+  }
 
   return res.json({ posts: savedPosts, totalPosts: totalSavedPosts });
 };
