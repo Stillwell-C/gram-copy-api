@@ -42,7 +42,10 @@ const searchUser = async (searchQuery) => {
       { username: { $regex: searchQuery, $options: "i" } },
       { email: { $regex: searchQuery, $options: "i" } },
     ],
-  });
+  })
+    .select("_id")
+    .select("username")
+    .select("userImgKey");
 };
 
 const duplicateUsernameCheck = async (username) => {
