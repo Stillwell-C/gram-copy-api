@@ -44,7 +44,7 @@ const getUsersSavedPosts = async (req, res) => {
   const totalSavedPosts = await countUsersSavedPosts(id);
 
   if (page && limit) {
-    const totalPages = Math.ceil(totalPosts / limit);
+    const totalPages = Math.ceil(totalSavedPosts / limit);
     return res.json({
       posts: savedPosts,
       totalPosts: totalSavedPosts,
