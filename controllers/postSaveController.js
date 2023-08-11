@@ -34,7 +34,11 @@ const getUsersSavedPosts = async (req, res) => {
     return res.status(400).json({ message: "No saved posts found" });
   }
 
-  for (const post of savedPosts) {
+  const formattedSavedPosts = savedPosts.map((savedPost) => ({
+    ...savedPost.post,
+  }));
+
+  for (const post of formattedSavedPosts) {
     const like = await findPostLike(id, post._id);
 
     post.isLiked = like;
@@ -46,14 +50,14 @@ const getUsersSavedPosts = async (req, res) => {
   if (page && limit) {
     const totalPages = Math.ceil(totalSavedPosts / limit);
     return res.json({
-      posts: savedPosts,
+      posts: formattedSavedPosts,
       totalPosts: totalSavedPosts,
       limit,
       totalPages,
     });
   }
 
-  return res.json({ posts: savedPosts, totalPosts: totalSavedPosts });
+  return res.json({ posts: formattedSavedPosts, totalPosts: totalSavedPosts });
 };
 
 const createPostSave = async (req, res) => {
