@@ -16,14 +16,14 @@ const findAllFollowers = async (userID, populate = false, page, limit) => {
         .sort("createdAt")
         .limit(limitInt)
         .skip(skip)
-        .populate("follower", "_id username")
+        .populate("follower", "_id username fullname userImgKey")
         .select("-followed")
         .lean();
     }
 
     return Follow.find({ followed: userID })
       .sort("createdAt")
-      .populate("follower", "_id username")
+      .populate("follower", "_id username fullname userImgKey")
       .select("-followed")
       .lean();
   } else {
@@ -43,14 +43,14 @@ const findAllFollowing = async (userID, populate = false, page, limit) => {
         .sort("createdAt")
         .limit(limitInt)
         .skip(skip)
-        .populate("followed", "_id username")
+        .populate("followed", "_id username fullname userImgKey")
         .select("-follower")
         .lean();
     }
 
     return Follow.find({ follower: userID })
       .sort("createdAt")
-      .populate("followed", "_id username")
+      .populate("followed", "_id username fullname userImgKey")
       .select("-follower")
       .lean();
   } else {
