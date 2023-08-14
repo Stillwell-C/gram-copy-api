@@ -5,6 +5,8 @@ const {
   createNewFollow,
   findFollow,
   findAndDeleteFollow,
+  countFollowers,
+  countFollowing,
 } = require("../service/follow.services");
 const { findAndUpdateUser } = require("../service/user.services");
 
@@ -18,7 +20,9 @@ const getAllFollowers = async (req, res) => {
     return res.status(400).json({ message: "No followers found" });
   }
 
-  res.json(followers);
+  const totalFollowers = await countFollowers(id);
+
+  res.json({ followers, totalFollowers });
 };
 
 const getAllFollowing = async (req, res) => {
@@ -31,7 +35,9 @@ const getAllFollowing = async (req, res) => {
     return res.status(400).json({ message: "No followers found" });
   }
 
-  res.json(followers);
+  const totalFollowing = await countFollowing(id);
+
+  res.json({ followers, totalFollowing });
 };
 
 const createFollow = async (req, res) => {
