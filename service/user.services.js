@@ -35,7 +35,12 @@ const findMultipleUsers = async (page, limit) => {
   }
 };
 
-const searchUser = async (searchQuery) => {
+const searchUser = async (searchQuery, page, limit) => {
+  const pageInt = parseInt(page) || 1;
+  const limitInt = parseInt(limit) || 10;
+
+  const postsSkip = (pageInt - 1) * limitInt;
+
   return User.find({
     $or: [
       { fullname: { $regex: searchQuery, $options: "i" } },
@@ -43,9 +48,12 @@ const searchUser = async (searchQuery) => {
       { email: { $regex: searchQuery, $options: "i" } },
     ],
   })
+    .limit(limitInt)
+    .skip(postsSkip)
     .select("_id")
     .select("username")
-    .select("userImgKey");
+    .select("userImgKey")
+    .select("fullname");
 };
 
 const duplicateUsernameCheck = async (username) => {
