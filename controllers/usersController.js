@@ -50,13 +50,12 @@ const getAllUsers = async (req, res) => {
 
 const searchUsers = async (req, res) => {
   const { searchQuery } = req.params;
+  const { page, limit } = req.query;
 
   if (!searchQuery)
     return res.status(400).json({ message: "Search query required" });
 
-  const results = await searchUser(searchQuery);
-
-  console.log(results);
+  const results = await searchUser(searchQuery, page, limit);
 
   if (!results) return res.status(404).json({ message: "No results found" });
 
