@@ -66,10 +66,20 @@ const findAndDeleteFollow = async (followID) => {
   return Follow.findByIdAndDelete(followID);
 };
 
+const countFollowers = async (userID) => {
+  return Follow.countDocuments({ followed: userID });
+};
+
+const countFollowing = async (userID) => {
+  return Follow.countDocuments({ follower: userID });
+};
+
 module.exports = {
   findFollow,
   findAllFollowers,
   findAllFollowing,
   createNewFollow,
   findAndDeleteFollow,
+  countFollowers,
+  countFollowing,
 };
