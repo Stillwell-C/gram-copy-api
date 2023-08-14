@@ -24,7 +24,7 @@ const getAllFollowers = async (req, res) => {
 
   if (page && limit) {
     const totalPages = Math.ceil(totalFollowers / limit);
-    return res.json({ posts, totalFollowers, limit, totalPages });
+    return res.json({ followers, totalFollowers, limit, totalPages });
   }
 
   res.json({ followers, totalFollowers });
@@ -44,7 +44,7 @@ const getAllFollowing = async (req, res) => {
 
   if (page && limit) {
     const totalPages = Math.ceil(totalFollowing / limit);
-    return res.json({ posts, totalFollowing, limit, totalPages });
+    return res.json({ following, totalFollowing, limit, totalPages });
   }
 
   res.json({ following, totalFollowing });
