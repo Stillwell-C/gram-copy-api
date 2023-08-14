@@ -29,15 +29,15 @@ const getAllFollowing = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
 
-  const followers = await findAllFollowing(id, true, page, limit);
+  const following = await findAllFollowing(id, true, page, limit);
 
-  if (!followers) {
+  if (!following) {
     return res.status(400).json({ message: "No followers found" });
   }
 
   const totalFollowing = await countFollowing(id);
 
-  res.json({ followers, totalFollowing });
+  res.json({ following, totalFollowing });
 };
 
 const createFollow = async (req, res) => {
