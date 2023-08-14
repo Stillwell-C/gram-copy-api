@@ -22,6 +22,11 @@ const getAllFollowers = async (req, res) => {
 
   const totalFollowers = await countFollowers(id);
 
+  if (page && limit) {
+    const totalPages = Math.ceil(totalFollowers / limit);
+    return res.json({ posts, totalFollowers, limit, totalPages });
+  }
+
   res.json({ followers, totalFollowers });
 };
 
@@ -32,10 +37,15 @@ const getAllFollowing = async (req, res) => {
   const following = await findAllFollowing(id, true, page, limit);
 
   if (!following) {
-    return res.status(400).json({ message: "No followers found" });
+    return res.status(400).json({ message: "No following users found" });
   }
 
   const totalFollowing = await countFollowing(id);
+
+  if (page && limit) {
+    const totalPages = Math.ceil(totalFollowing / limit);
+    return res.json({ posts, totalFollowing, limit, totalPages });
+  }
 
   res.json({ following, totalFollowing });
 };
