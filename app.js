@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const corsOptions = require("./config/corsOptions");
 const errorHandler = require("./middleware/errorHandler");
+const jwtReqestIdDecoder = require("./middleware/jwtRequestIdDecoder");
 
 const createServer = () => {
   const app = express();
@@ -11,6 +12,7 @@ const createServer = () => {
   app.use(express.json());
   app.use(cors(corsOptions));
   app.use(cookieParser());
+  app.use(jwtReqestIdDecoder);
 
   app.use("/", express.static(path.join(__dirname, "public")));
   app.use("/", require("./routes/root"));
