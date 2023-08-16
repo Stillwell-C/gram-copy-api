@@ -68,7 +68,8 @@ const getMultiplePosts = async (req, res) => {
     for (const post of posts) {
       const like = await findPostLike(userReqID, post._id);
       const save = await findPostSave(userReqID, post._id);
-      const follow = await findFollow(post._id, userReqID);
+      let follow = false;
+      if (post._id !== userReqID) await findFollow(post._id, userReqID);
 
       post.isLiked = like ? true : false;
       post.isSaved = save ? true : false;
