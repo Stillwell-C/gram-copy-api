@@ -4,6 +4,7 @@ const {
   deleteImageFromCloudinary,
 } = require("../service/cloudinary.services");
 const { countComments } = require("../service/comment.services");
+const { findFollow } = require("../service/follow.services");
 const {
   findPost,
   countPosts,
@@ -43,7 +44,8 @@ const getPost = async (req, res) => {
 };
 
 const getMultiplePosts = async (req, res) => {
-  const { page, limit, userID, feedID, reqID } = req.query;
+  const { page, limit, userID, feedID } = req.query;
+  const reqID = req.reqID;
 
   let queryArr = [];
   if (feedID?.length) {
@@ -60,15 +62,17 @@ const getMultiplePosts = async (req, res) => {
     return res.status(400).json({ message: "No posts found" });
 
   //This works but has slowed down process. May be unavoidable
-  if (feedID?.length || reqID?.length) {
-    const userReqID = reqID.length ? reqID : feedID;
+  if (feedID?.length || reqID) {
+    const userReqID = reqID ? reqID : feedID;
 
     for (const post of posts) {
       const like = await findPostLike(userReqID, post._id);
       const save = await findPostSave(userReqID, post._id);
+      const follow = await findFollow(post._id, userReqID);
 
       post.isLiked = like ? true : false;
       post.isSaved = save ? true : false;
+      post.isFollow = follow ? true : false;
     }
   }
 
