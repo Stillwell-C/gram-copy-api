@@ -24,20 +24,26 @@ const getPost = async (req, res) => {
     return res.status(400).json({ message: "Post ID required" });
   }
 
-  const userID = req?.query?.userID;
-
+  const reqID = req.reqID;
   const post = await findPost({ _id: req.params.id });
 
   if (!post) {
     return res.status(400).json({ message: "Post not found" });
   }
 
-  if (userID.length) {
-    const like = await findPostLike(userID, post._id);
-    const save = await findPostSave(userID, post._id);
+  post.isFollow = false;
+
+  if (reqID) {
+    const like = await findPostLike(reqID, post._id);
+    const save = await findPostSave(reqID, post._id);
 
     post.isLiked = like ? true : false;
     post.isSaved = save ? true : false;
+
+    if (user._id !== reqID) {
+      const follow = await findFollow(user._id, reqID);
+      if (follow) post.isFollow = true;
+    }
   }
 
   return res.json(post);
@@ -69,11 +75,18 @@ const getMultiplePosts = async (req, res) => {
       const like = await findPostLike(userReqID, post._id);
       const save = await findPostSave(userReqID, post._id);
       let follow = false;
-      if (post._id !== userReqID) await findFollow(post._id, userReqID);
+      if (post.user._id !== userReqID)
+        follow = await findFollow(post.user._id, userReqID);
 
       post.isLiked = like ? true : false;
       post.isSaved = save ? true : false;
       post.isFollow = follow ? true : false;
+    }
+  } else {
+    for (const post of posts) {
+      post.isLiked = false;
+      post.isSaved = false;
+      post.isFollow = false;
     }
   }
 
