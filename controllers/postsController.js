@@ -255,9 +255,7 @@ const deletePost = async (req, res) => {
     return res.status(400).json({ message: "User post count not updated" });
   }
 
-  const [publicKey] = imgKey.split(".");
-
-  deleteImageFromCloudinary(publicKey);
+  deleteImageFromCloudinary(imgKey);
 
   res.json({ message: `Deleted post ${deletedPost._id}` });
 };
