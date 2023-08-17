@@ -23,8 +23,12 @@ const generateExpectedSignature = (public_id, version) => {
   );
 };
 
-const deleteImageFromCloudinary = (public_id) => {
-  cloudinary.uploader.destroy(public_id);
+const deleteImageFromCloudinary = (imageKey) => {
+  const public_id = imageKey.split(".");
+  cloudinary.api.delete_resources(public_id[0], {
+    type: "upload",
+    resource_type: "image",
+  });
 };
 
 module.exports = {
