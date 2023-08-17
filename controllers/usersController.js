@@ -3,6 +3,7 @@ const {
   hashPassword,
   generateAccessToken,
 } = require("../service/auth.services");
+const { findFollow } = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
 const {
   duplicateEmailCheck,
@@ -22,18 +23,29 @@ const getUser = async (req, res) => {
 
   const idParse = checkValidObjectID(req.params.id);
 
-  let user;
+  let user = {};
   if (idParse) {
     user = await findUserById(req.params.id);
   }
-  if (!user) {
+  if (!user._id) {
     user = await findUserByUsernameWithoutPassword(req.params.id);
   }
 
   if (!user) {
     return res.status(400).json({ message: `User not found` });
   }
-  res.json(user);
+
+  const userObj = user.toObject();
+
+  userObj.isFollow = false;
+
+  const reqID = req.reqID;
+  if (reqID && user._id !== reqID) {
+    const follow = await findFollow(user._id, reqID);
+    if (follow) userObj.isFollow = true;
+  }
+
+  res.json(userObj);
 };
 
 const getAllUsers = async (req, res) => {
@@ -113,7 +125,7 @@ const updateUserInfo = async (req, res) => {
     return res.status(400).json({ message: "User ID parameter required" });
   }
 
-  const { id, username, password, roles, banned, email, fullname, userImgURL } =
+  const { id, username, password, roles, banned, email, fullname, userImgKey } =
     req.body;
 
   //An array on the user will be updated
@@ -186,7 +198,7 @@ const updateUserInfo = async (req, res) => {
     updateObj.password = hashedPassword;
   }
   //Fields not requiring special processing
-  const updateFields = [roles, banned, fullname, userImgURL];
+  const updateFields = [roles, banned, fullname, userImgKey];
   for (const field of updateFields) {
     if (field) {
       updateObj[field] = field;
