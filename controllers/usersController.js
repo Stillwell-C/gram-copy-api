@@ -3,6 +3,7 @@ const {
   hashPassword,
   generateAccessToken,
 } = require("../service/auth.services");
+const { deleteImageFromCloudinary } = require("../service/cloudinary.services");
 const { findFollow } = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
 const {
@@ -128,54 +129,6 @@ const updateUserInfo = async (req, res) => {
   const { id, username, password, roles, banned, email, fullname, userImgKey } =
     req.body;
 
-  //An array on the user will be updated
-  //Action values will be 1 to add -1 to remove
-  //UpdateField corresponds to an array on user model such as likedImgs
-  // if (updateField?.length) {
-  //   if (!postID && !userID) {
-  //     return res
-  //       .status(400)
-  //       .json({ message: "A User ID or Post ID parameter is required" });
-  //   }
-
-  //   if (!updateField || !actionValue) {
-  //     return res.status(400).json({ message: "Update parameters required" });
-  //   }
-
-  //   const updateID = postID ? postID : userID;
-
-  //   let updatedUser;
-  //   if (actionValue > 0) {
-  //     //Ensure that same value does not already exist
-  //     const duplicateValueCheck = await findUser({
-  //       _id: id,
-  //       [updateField]: { $in: [updateID] },
-  //     });
-  //     if (duplicateValueCheck.length) {
-  //       return res
-  //         .status(400)
-  //         .json({ message: "This value already exists on this user" });
-  //     }
-
-  //     updatedUser = await findAndUpdateArr(id, {
-  //       $push: { [updateField]: updateID },
-  //     });
-  //   } else {
-  //     updatedUser = await findAndUpdateArr(id, {
-  //       $pull: { [updateField]: updateID },
-  //     });
-  //   }
-
-  //   if (!updatedUser) {
-  //     return res.status(400).json({ message: "Parameter not found" });
-  //   }
-
-  //   return res
-  //     .status(200)
-  //     .json({ message: `User's ${updateField} has been updated` });
-  // }
-
-  //If array is not updated, other fields on user model will be updated
   const updateObj = {};
   if (username) {
     const duplicate = await duplicateUsernameCheck(username);
@@ -197,18 +150,37 @@ const updateUserInfo = async (req, res) => {
     const hashedPassword = await hashPassword(password);
     updateObj.password = hashedPassword;
   }
-  //Fields not requiring special processing
-  const updateFields = [roles, banned, fullname, userImgKey];
-  for (const field of updateFields) {
-    if (field) {
-      updateObj[field] = field;
-    }
+  if (roles) updateObj.roles = roles;
+  if (banned) updateObj.banned = banned;
+  if (fullname) updateObj.fullname = fullname;
+  let previousImgKey = null;
+  if (userImgKey) {
+    updateObj.userImgKey = userImgKey;
+    const user = await findUserById(id);
+    previousImgKey = user.userImgKey;
   }
+
+  //Fields not requiring special processing
+  // const updateFields = [{ roles }, { banned }, { fullname }, { userImgKey }];
+  // for (const [key, value] of Object.entries(updateFields)) {
+  //   if (key && value) {
+  //     updateObj[key] = value;
+  //   }
+  // }
+
+  console.log(updateObj);
+  console.log(id);
 
   const updatedUser = await findAndUpdateUser(id, updateObj);
 
+  console.log(updatedUser);
+
   if (!updatedUser) {
     return res.status(400).json({ message: "Invalid data received" });
+  }
+
+  if (previousImgKey) {
+    deleteImageFromCloudinary(previousImgKey);
   }
 
   const accessToken = generateAccessToken(
