@@ -201,13 +201,13 @@ const createNewPost = async (req, res) => {
 };
 
 const updatePost = async (req, res) => {
-  const { id, altText, caption, location, likeChange } = req.body;
+  const { id, altText, caption, location, taggedUsers } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "Post ID parameter required" });
   }
 
-  if (!altText && !caption && !location && !likeChange) {
+  if (!altText && !caption && !location && !taggedUsers) {
     return res.status(400).json({
       message:
         "Update requires change to alt text, caption, location, likes parameters",
@@ -225,12 +225,13 @@ const updatePost = async (req, res) => {
     updatePost = await findAndUpdatePost(id, { ...updateObj });
   }
   //The following will not update the timestamp
-  if (likeChange) {
-    if (likeChange > 0) {
-      updatePost = await findAndUpdatePost(id, { $inc: { likes: 1 } }, false);
-    } else {
-      updatePost = await findAndUpdatePost(id, { $inc: { likes: -1 } }, false);
+  if (taggedUsers) {
+    if (taggedUsers.length > 20) {
+      return res.status(400).json({
+        message: "Cannot have more than 20 users",
+      });
     }
+    updatePost = await findAndUpdatePost(id, taggedUsers, false);
   }
 
   if (!updatedPost) {
