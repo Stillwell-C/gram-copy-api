@@ -27,11 +27,11 @@ const getAllFollowers = async (req, res) => {
       if (follower.follower._id !== reqID)
         follow = await findFollow(follower.follower._id, reqID);
 
-      follower.isFollow = follow ? true : false;
+      follower.follower.isFollow = follow ? true : false;
     }
   } else {
     for (const follower of followers) {
-      follower.isFollow = false;
+      follower.follower.isFollow = false;
     }
   }
 
@@ -62,11 +62,11 @@ const getAllFollowing = async (req, res) => {
       if (followedUser.followed._id !== reqID)
         follow = await findFollow(followedUser.followed._id, reqID);
 
-      followedUser.isFollow = follow ? true : false;
+      followedUser.followed.isFollow = follow ? true : false;
     }
   } else {
     for (const followedUser of following) {
-      followedUser.isFollow = false;
+      followedUser.followed.isFollow = false;
     }
   }
 
