@@ -13,11 +13,26 @@ const { findAndUpdateUser } = require("../service/user.services");
 const getAllFollowers = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
+  const reqID = req.reqID;
 
   const followers = await findAllFollowers(id, true, page, limit);
 
   if (!followers) {
     return res.status(400).json({ message: "No followers found" });
+  }
+
+  if (reqID) {
+    for (const follower of followers) {
+      let follow = false;
+      if (follower.follower._id !== reqID)
+        follow = await findFollow(follower.follower._id, reqID);
+
+      follower.isFollow = follow ? true : false;
+    }
+  } else {
+    for (const follower of followers) {
+      follower.isFollow = false;
+    }
   }
 
   const totalFollowers = await countFollowers(id);
@@ -33,11 +48,26 @@ const getAllFollowers = async (req, res) => {
 const getAllFollowing = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
+  const reqID = req.reqID;
 
   const following = await findAllFollowing(id, true, page, limit);
 
   if (!following) {
     return res.status(400).json({ message: "No following users found" });
+  }
+
+  if (reqID) {
+    for (const followedUser of following) {
+      let follow = false;
+      if (followedUser.followed._id !== reqID)
+        follow = await findFollow(followedUser.followed._id, reqID);
+
+      followedUser.isFollow = follow ? true : false;
+    }
+  } else {
+    for (const followedUser of following) {
+      followedUser.isFollow = false;
+    }
   }
 
   const totalFollowing = await countFollowing(id);
