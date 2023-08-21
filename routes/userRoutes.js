@@ -13,4 +13,6 @@ router.route("/:id").get(usersController.getUser);
 
 router.route("/search/:searchQuery").get(usersController.searchUsers);
 
+router.route("/userArr/:userArr").get(usersController.getUsersFromArr);
+
 module.exports = router;
