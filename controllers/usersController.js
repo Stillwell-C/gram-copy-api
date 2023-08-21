@@ -16,6 +16,7 @@ const {
   findUserById,
   findUserByUsernameWithoutPassword,
   searchUser,
+  findUserByIdMinimalData,
 } = require("../service/user.services");
 
 const getUser = async (req, res) => {
@@ -47,6 +48,22 @@ const getUser = async (req, res) => {
   }
 
   res.json(userObj);
+};
+
+const getUsersFromArr = async (req, res) => {
+  if (!req?.params?.userArr) {
+    return res.status(400).json({ message: "User array required" });
+  }
+
+  const reqArr = req.params.userArr.split(",");
+
+  const resUserArr = [];
+  for (const userID of reqArr) {
+    const userData = await findUserByIdMinimalData(userID);
+    if (userData) resUserArr.push(userData);
+  }
+
+  res.json(resUserArr);
 };
 
 const getAllUsers = async (req, res) => {
@@ -168,12 +185,7 @@ const updateUserInfo = async (req, res) => {
   //   }
   // }
 
-  console.log(updateObj);
-  console.log(id);
-
   const updatedUser = await findAndUpdateUser(id, updateObj);
-
-  console.log(updatedUser);
 
   if (!updatedUser) {
     return res.status(400).json({ message: "Invalid data received" });
@@ -218,6 +230,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getUser,
+  getUsersFromArr,
   getAllUsers,
   searchUsers,
   createNewUser,
