@@ -89,6 +89,24 @@ const findAndUpdatePost = async (
   }
 };
 
+const findAndAddTaggedUser = async (postID, userID) => {
+  return Post.findOneAndUpdate(
+    { _id: postID },
+    { $push: { taggedUsers: userID } },
+    { timestamps: false },
+    { new: true }
+  );
+};
+
+const findAndRemoveTaggedUser = async (postID, userID) => {
+  return Post.findOneAndUpdate(
+    { _id: postID },
+    { $pull: { taggedUsers: userID } },
+    { timestamps: false },
+    { new: true }
+  );
+};
+
 const findAndDeletePost = async (postId) => {
   return Post.findByIdAndDelete(postId).exec();
 };
@@ -111,6 +129,8 @@ module.exports = {
   findTaggedPosts,
   createPost,
   findAndUpdatePost,
+  findAndAddTaggedUser,
+  findAndRemoveTaggedUser,
   findAndDeletePost,
   countPosts,
   countTaggedPosts,
