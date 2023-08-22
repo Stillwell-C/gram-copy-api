@@ -5,6 +5,7 @@ const {
 } = require("../service/cloudinary.services");
 const { countComments } = require("../service/comment.services");
 const { findFollow } = require("../service/follow.services");
+const { checkValidObjectID } = require("../service/mongoose.services");
 const {
   findPost,
   countPosts,
@@ -14,6 +15,8 @@ const {
   findAndDeletePost,
   countTaggedPosts,
   findTaggedPosts,
+  findAndAddTaggedUser,
+  findAndRemoveTaggedUser,
 } = require("../service/post.services");
 const { findPostLike } = require("../service/postLike.service");
 const { findPostSave } = require("../service/postSave.service");
@@ -213,16 +216,16 @@ const createNewPost = async (req, res) => {
 };
 
 const updatePost = async (req, res) => {
-  const { id, altText, caption, location, taggedUsers } = req.body;
+  const { id, altText, caption, location } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "Post ID parameter required" });
   }
 
-  if (!altText && !caption && !location && !taggedUsers) {
+  if (!altText && !caption && !location) {
     return res.status(400).json({
       message:
-        "Update requires change to alt text, caption, location, likes parameters",
+        "Update requires change to alt text, caption, location, or likes parameters",
     });
   }
 
@@ -251,6 +254,68 @@ const updatePost = async (req, res) => {
   }
 
   res.json({ message: `Updated post: ${updatedPost._id}` });
+};
+
+const updateTaggedUsers = async (req, res) => {
+  const { postID, userID, updateAction } = req?.body;
+
+  if (!postID || !userID || !updateAction) {
+    return res.status(400).json({
+      message: "Must include post ID, user ID, and update action",
+    });
+  }
+
+  const idParse = checkValidObjectID(userID);
+
+  if (!idParse) {
+    return res.status(400).json({
+      message: "Must include valid user ID",
+    });
+  }
+
+  const post = await findPost({ _id: postID });
+
+  if (!post) {
+    return res.status(400).json({
+      message: "Post not found",
+    });
+  }
+  if (post.taggedUsers.length >= 20) {
+    return res.status(400).json({
+      message: "Cannot tag more than 20 users",
+    });
+  }
+
+  let updatedUser;
+  if (updateAction === "add" || updateAction === "ADD") {
+    const userCheck = post.taggedUsers.every(
+      (taggedUser) => taggedUser.toString() !== userID
+    );
+    if (!userCheck) {
+      return res.status(400).json({
+        message: "Cannot tag the same user twice",
+      });
+    }
+
+    updatedUser = await findAndAddTaggedUser(postID, userID);
+  } else if (updateAction === "remove" || updateAction === "REMOVE") {
+    const userCheck = post.taggedUsers.some(
+      (taggedUser) => taggedUser.toString() === userID
+    );
+    if (!userCheck) {
+      return res.status(400).json({
+        message: "User is not tagged in this image",
+      });
+    }
+
+    updatedUser = await findAndRemoveTaggedUser(postID, userID);
+  }
+
+  if (!updatedUser) {
+    return res.status(400).json({ message: "Invalid data recieved" });
+  }
+
+  res.json(updatedUser);
 };
 
 const deletePost = async (req, res) => {
@@ -292,5 +357,6 @@ module.exports = {
   getTaggedPosts,
   createNewPost,
   updatePost,
+  updateTaggedUsers,
   deletePost,
 };
