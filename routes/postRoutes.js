@@ -11,6 +11,8 @@ router
 
 router.route("/:id").get(postController.getPost);
 
+router.route("/tagged").patch(postController.updateTaggedUsers);
+
 router.route("/tagged/:userID").get(postController.getTaggedPosts);
 
 module.exports = router;
