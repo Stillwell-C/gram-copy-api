@@ -12,6 +12,10 @@ const findUserById = async (userId) => {
   return User.findById(userId).select("-password").lean().exec();
 };
 
+const findUserByIdWithPassword = async (userId) => {
+  return User.findById(userId).lean().exec();
+};
+
 const findUserByIdMinimalData = async (userId) => {
   return User.findById(userId)
     .select("username")
@@ -99,6 +103,7 @@ module.exports = {
   findUser,
   findUserWithPassword,
   findUserById,
+  findUserByIdWithPassword,
   findUserByIdMinimalData,
   findUserByUsernameWithoutPassword,
   findMultipleUsers,
