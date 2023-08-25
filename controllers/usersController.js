@@ -3,6 +3,7 @@ const {
   hashPassword,
   generateAccessToken,
   comparePasswords,
+  checkAndVerifyPassword,
 } = require("../service/auth.services");
 const { deleteImageFromCloudinary } = require("../service/cloudinary.services");
 const { findFollow } = require("../service/follow.services");
@@ -191,20 +192,22 @@ const updateUserInfo = async (req, res) => {
     updateObj.email = email;
   }
   if (newPassword && oldPassword) {
-    const user = await findUserByIdWithPassword(id);
+    // const user = await findUserByIdWithPassword(id);
 
-    const rateLimitUser = await consecutivePasswordFailLimiter.get(
-      user.username
-    );
+    // const rateLimitUser = await consecutivePasswordFailLimiter.get(
+    //   user.username
+    // );
 
-    if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 5) {
-      return res.status(429).json({
-        message:
-          "Too many attempts with wrong password. Wait 15 minutes before trying again.",
-      });
-    }
+    // if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 5) {
+    //   return res.status(429).json({
+    //     message:
+    //       "Too many attempts with wrong password. Wait 15 minutes before trying again.",
+    //   });
+    // }
 
-    const passwordMatch = await comparePasswords(oldPassword, user.password);
+    // const passwordMatch = await comparePasswords(oldPassword, user.password);
+
+    const passwordMatch = await checkAndVerifyPassword(oldPassword, id);
 
     if (!passwordMatch) {
       await consecutivePasswordFailLimiter.consume(user.username);
