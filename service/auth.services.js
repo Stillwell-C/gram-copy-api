@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { findUserByUsernameWithoutPassword } = require("./user.services");
+const {
+  findUserByUsernameWithoutPassword,
+  findUserByIdWithPassword,
+} = require("./user.services");
 const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
 require("dotenv").config();
 
@@ -58,20 +61,26 @@ const verifyUsersPassword = async (enteredPassword, userID) => {
   const rateLimitUser = await consecutivePasswordFailLimiter.get(user.username);
 
   if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 5) {
-    return res.status(429).json({
-      message:
-        "Too many attempts with wrong password. Wait 15 minutes before trying again.",
-    });
+    return "EXCEEDED";
   }
 
   const passwordCheck = await comparePasswords(enteredPassword, user.password);
 
   if (!passwordCheck) {
-    await consecutivePasswordFailLimiter.consume(user.username);
-
+    try {
+      await consecutivePasswordFailLimiter.consume(user.username);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
     return false;
   } else if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 0) {
-    await consecutivePasswordFailLimiter.delete(user.username);
+    try {
+      await consecutivePasswordFailLimiter.delete(user.username);
+    } catch (err) {
+      console.log(err);
+      return true;
+    }
   }
   return true;
 };
