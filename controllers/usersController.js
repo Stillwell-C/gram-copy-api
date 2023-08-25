@@ -3,7 +3,7 @@ const {
   hashPassword,
   generateAccessToken,
   comparePasswords,
-  checkAndVerifyPassword,
+  verifyUsersPassword,
 } = require("../service/auth.services");
 const { deleteImageFromCloudinary } = require("../service/cloudinary.services");
 const { findFollow } = require("../service/follow.services");
@@ -207,16 +207,11 @@ const updateUserInfo = async (req, res) => {
 
     // const passwordMatch = await comparePasswords(oldPassword, user.password);
 
-    const passwordMatch = await checkAndVerifyPassword(oldPassword, id);
+    const passwordMatch = await verifyUsersPassword(oldPassword, id);
 
     if (!passwordMatch) {
-      await consecutivePasswordFailLimiter.consume(user.username);
-
       return res.status(401).json({ message: "Old password incorrect" });
-    } else if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 0) {
-      await consecutivePasswordFailLimiter.delete(user.username);
     }
-
     const hashedPassword = await hashPassword(newPassword);
     updateObj.password = hashedPassword;
   }
