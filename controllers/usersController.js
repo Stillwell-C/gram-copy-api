@@ -211,6 +211,12 @@ const updateUserInfo = async (req, res) => {
 
     const passwordMatch = await verifyUsersPassword(oldPassword, id);
 
+    if (userPasswordCheck === "EXCEEDED") {
+      return res.status(429).json({
+        message:
+          "Too many attempts with wrong password. Wait 15 minutes before trying again.",
+      });
+    }
     if (!passwordMatch) {
       return res.status(401).json({ message: "Old password incorrect" });
     }
@@ -274,6 +280,14 @@ const deleteUser = async (req, res) => {
 
   if (userPassword) {
     const userPasswordCheck = await verifyUsersPassword(userPassword, id);
+
+    if (userPasswordCheck === "EXCEEDED") {
+      return res.status(429).json({
+        message:
+          "Too many attempts with wrong password. Wait 15 minutes before trying again.",
+      });
+    }
+
     if (!userPasswordCheck) {
       return res.status(401).json({ message: "Incorrect password" });
     }
