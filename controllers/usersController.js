@@ -152,6 +152,7 @@ const updateUserInfo = async (req, res) => {
     username,
     oldPassword,
     newPassword,
+    userBio,
     roles,
     banned,
     email,
@@ -165,6 +166,7 @@ const updateUserInfo = async (req, res) => {
     !newPassword &&
     !roles &&
     !banned &&
+    !userBio &&
     !email &&
     !fullname &&
     !userImgKey
@@ -224,6 +226,7 @@ const updateUserInfo = async (req, res) => {
     const user = await findUserById(id);
     previousImgKey = user.userImgKey;
   }
+  if (userBio) updateObj.userBio = userBio;
 
   //Fields not requiring special processing
   // const updateFields = [{ roles }, { banned }, { fullname }, { userImgKey }];
@@ -255,14 +258,25 @@ const updateUserInfo = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { id, adminPassword } = req.body;
+  const { id, adminPassword, userPassword } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "User ID required" });
   }
 
+  if (!adminPassword && !userPassword) {
+    return res.status(400).json({ message: "Password required" });
+  }
+
   if (adminPassword && adminPassword !== process.env.ADMINPASS) {
     return res.status(401).json({ message: "Incorrect password" });
+  }
+
+  if (userPassword) {
+    const userPasswordCheck = await verifyUsersPassword(userPassword, id);
+    if (!userPasswordCheck) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
   }
 
   const deletedUser = await findAndDeleteUser(id);
