@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { findUserByUsernameWithoutPassword } = require("./user.services");
+const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
 require("dotenv").config();
 
 const generateAccessToken = (username, roles, id, img, fullname) => {
@@ -51,12 +52,28 @@ const comparePasswords = async (enteredPassword, userPassword) => {
   return bcrypt.compare(enteredPassword, userPassword);
 };
 
+const checkAndVerifyPassword = async (enteredPassword, userID) => {
+  const user = await findUserByIdWithPassword(userID);
+
+  const rateLimitUser = await consecutivePasswordFailLimiter.get(user.username);
+
+  if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 5) {
+    return res.status(429).json({
+      message:
+        "Too many attempts with wrong password. Wait 15 minutes before trying again.",
+    });
+  }
+
+  return await comparePasswords(enteredPassword, user.password);
+};
+
 const exportFunctions = {
   generateAccessToken,
   generateRefreshToken,
   verifyJWTAndReturnUser,
   hashPassword,
   comparePasswords,
+  checkAndVerifyPassword,
 };
 
 module.exports = exportFunctions;
