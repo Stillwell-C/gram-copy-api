@@ -52,7 +52,7 @@ const comparePasswords = async (enteredPassword, userPassword) => {
   return bcrypt.compare(enteredPassword, userPassword);
 };
 
-const checkAndVerifyPassword = async (enteredPassword, userID) => {
+const verifyUsersPassword = async (enteredPassword, userID) => {
   const user = await findUserByIdWithPassword(userID);
 
   const rateLimitUser = await consecutivePasswordFailLimiter.get(user.username);
@@ -64,7 +64,16 @@ const checkAndVerifyPassword = async (enteredPassword, userID) => {
     });
   }
 
-  return await comparePasswords(enteredPassword, user.password);
+  const passwordCheck = await comparePasswords(enteredPassword, user.password);
+
+  if (!passwordCheck) {
+    await consecutivePasswordFailLimiter.consume(user.username);
+
+    return false;
+  } else if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 0) {
+    await consecutivePasswordFailLimiter.delete(user.username);
+  }
+  return true;
 };
 
 const exportFunctions = {
@@ -73,7 +82,7 @@ const exportFunctions = {
   verifyJWTAndReturnUser,
   hashPassword,
   comparePasswords,
-  checkAndVerifyPassword,
+  verifyUsersPassword,
 };
 
 module.exports = exportFunctions;
