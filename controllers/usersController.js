@@ -20,6 +20,7 @@ const {
   searchUser,
   findUserByIdMinimalData,
   findUserByIdWithPassword,
+  findSingleUser,
 } = require("../service/user.services");
 const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
 
@@ -52,6 +53,33 @@ const getUser = async (req, res) => {
   }
 
   res.json(userObj);
+};
+
+const emailAvailability = async (req, res) => {
+  if (!req?.params?.email) {
+    return res.status(400).json({ message: "User email required" });
+  }
+
+  const user = await duplicateEmailCheck(req.params.email);
+
+  if (!user) {
+    return res.json({ availability: true });
+  }
+
+  return res.json({ availability: false });
+};
+
+const usernameAvailability = async (req, res) => {
+  if (!req?.params?.username) {
+    return res.status(400).json({ message: "User username required" });
+  }
+  const user = await duplicateUsernameCheck(req.params.username);
+
+  if (!user) {
+    return res.json({ availability: true });
+  }
+
+  return res.json({ availability: false });
 };
 
 const getUsersFromArr = async (req, res) => {
@@ -308,6 +336,8 @@ module.exports = {
   getUser,
   getUsersFromArr,
   getAllUsers,
+  emailAvailability,
+  usernameAvailability,
   searchUsers,
   createNewUser,
   updateUserInfo,
