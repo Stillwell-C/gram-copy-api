@@ -4,7 +4,7 @@ const {
   deleteImageFromCloudinary,
 } = require("../service/cloudinary.services");
 const { countComments } = require("../service/comment.services");
-const { findFollow } = require("../service/follow.services");
+const { findFollow, findAllFollowing } = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
 const {
   findPost,
@@ -53,12 +53,16 @@ const getPost = async (req, res) => {
 };
 
 const getMultiplePosts = async (req, res) => {
-  const { page, limit, userID, feedID } = req.query;
+  const { page, limit, userID, followingFeed } = req.query;
   const reqID = req.reqID;
 
   let queryArr = [];
-  if (feedID?.length) {
+  if (followingFeed === "true") {
     //Some logic to make Arr of followers
+    const following = await findAllFollowing(req.reqID);
+    for (const followedUser of following) {
+      queryArr.push(followedUser.followed._id);
+    }
   } else if (userID?.length) {
     queryArr.push(userID);
   }
@@ -71,15 +75,13 @@ const getMultiplePosts = async (req, res) => {
     return res.status(400).json({ message: "No posts found" });
 
   //This works but has slowed down process. May be unavoidable
-  if (feedID?.length || reqID) {
-    const userReqID = reqID ? reqID : feedID;
-
+  if (reqID) {
     for (const post of posts) {
-      const like = await findPostLike(userReqID, post._id);
-      const save = await findPostSave(userReqID, post._id);
+      const like = await findPostLike(reqID, post._id);
+      const save = await findPostSave(reqID, post._id);
       let follow = false;
-      if (post.user._id !== userReqID)
-        follow = await findFollow(post.user._id, userReqID);
+      if (post.user._id !== reqID)
+        follow = await findFollow(post.user._id, reqID);
 
       post.isLiked = like ? true : false;
       post.isSaved = save ? true : false;
