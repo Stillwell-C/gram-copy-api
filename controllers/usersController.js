@@ -239,7 +239,7 @@ const updateUserInfo = async (req, res) => {
 
     const passwordMatch = await verifyUsersPassword(oldPassword, id);
 
-    if (userPasswordCheck === "EXCEEDED") {
+    if (passwordMatch === "EXCEEDED") {
       return res.status(429).json({
         message:
           "Too many attempts with wrong password. Wait 15 minutes before trying again.",
