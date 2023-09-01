@@ -81,7 +81,9 @@ const refresh = async (req, res) => {
   const verifiedUser = await verifyJWTAndReturnUser(refreshToken);
 
   if (verifiedUser === "ACCESS FORBIDDEN") {
-    return res.status(403).json({ message: "Forbidden" });
+    return res
+      .status(403)
+      .json({ message: "Invalid access token. Log in again." });
   }
 
   if (!verifiedUser) {
