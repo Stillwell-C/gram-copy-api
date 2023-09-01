@@ -58,8 +58,14 @@ const getMultiplePosts = async (req, res) => {
 
   let queryArr = [];
   if (followingFeed === "true") {
-    //Some logic to make Arr of followers
-    const following = await findAllFollowing(req.reqID);
+    const following = await findAllFollowing(reqID);
+
+    if (!following.length) {
+      return res.status(400).json({
+        message: "User has no feed because not following other users",
+      });
+    }
+
     for (const followedUser of following) {
       queryArr.push(followedUser.followed._id);
     }
@@ -149,9 +155,8 @@ const getTaggedPosts = async (req, res) => {
 };
 
 const createNewPost = async (req, res) => {
-  const { user, altText, caption, imgData, location } = req.body;
-
-  console.log(req.body);
+  const { altText, caption, imgData, location } = req.body;
+  const reqID = req.reqID;
 
   if (
     !imgData?.public_id ||
@@ -175,13 +180,13 @@ const createNewPost = async (req, res) => {
       .json({ message: "Invalid image signature provided." });
   }
 
-  if (!user) {
+  if (!reqID) {
     return res
       .status(401)
       .json({ message: "Please sign in before submitting post." });
   }
 
-  const userCheck = await findUserById(user);
+  const userCheck = await findUserById(reqID);
 
   if (!userCheck) {
     return res.status(400).json({
@@ -190,7 +195,7 @@ const createNewPost = async (req, res) => {
   }
 
   const newPost = {
-    user,
+    user: reqID,
     altText,
     caption,
     location,
@@ -204,7 +209,7 @@ const createNewPost = async (req, res) => {
   }
 
   const updatedUser = await findAndUpdateUser(
-    user,
+    reqID,
     { $inc: { postNo: 1 } },
     false
   );
