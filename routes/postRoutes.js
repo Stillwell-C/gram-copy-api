@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const postController = require("../controllers/postsController");
+const selectiveJWTVerification = require("../middleware/selectiveJWTVerification");
 
 router
   .route("/")
-  .get(postController.getMultiplePosts)
+  .get(selectiveJWTVerification, postController.getMultiplePosts)
   .post(postController.createNewPost)
   .patch(postController.updatePost)
   .delete(postController.deletePost);
