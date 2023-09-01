@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const postLikeController = require("../controllers/postLikeController");
+const verifyJWT = require("../middleware/verifyJWT");
 
 router
   .route("/:id/")
   .get(postLikeController.getAllLikedUsers)
-  .post(postLikeController.createPostLike)
-  .delete(postLikeController.deletePostLike);
+  .post(verifyJWT, postLikeController.createPostLike)
+  .delete(verifyJWT, postLikeController.deletePostLike);
 
-router.route("/user/:id/").get(postLikeController.getUsersLikedPosts);
+router
+  .route("/user/:id/")
+  .get(verifyJWT, postLikeController.getUsersLikedPosts);
 
 module.exports = router;
