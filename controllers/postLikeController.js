@@ -1,3 +1,4 @@
+const { createNotification } = require("../service/notification.services");
 const { findAndUpdatePost } = require("../service/post.services");
 const {
   findAllLikedUsers,
@@ -16,6 +17,7 @@ const getAllLikedUsers = async (req, res) => {
   if (!followers) {
     return res.status(400).json({ message: "No likes found" });
   }
+  //max num
 
   return res.json(followers);
 };
@@ -29,12 +31,13 @@ const getUsersLikedPosts = async (req, res) => {
   if (!likedPosts) {
     return res.status(400).json({ message: "No likes found" });
   }
+  //max num
 
   return res.json(likedPosts);
 };
 
 const createPostLike = async (req, res) => {
-  const { userID } = req.body;
+  const userID = req?.reqID;
   const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
@@ -66,11 +69,18 @@ const createPostLike = async (req, res) => {
     return res.status(400).json({ message: "Post like count not updated" });
   }
 
+  await createNotification({
+    notifiedUser: updatePost.user,
+    notifyingUser: userID,
+    notificationType: "POSTLIKE",
+    post: parentPostID,
+  });
+
   return res.status(201).json({ message: "Liked post" });
 };
 
 const deletePostLike = async (req, res) => {
-  const { userID } = req.body;
+  const userID = req?.reqID;
   const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
