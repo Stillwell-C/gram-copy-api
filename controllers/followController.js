@@ -139,7 +139,8 @@ const createFollow = async (req, res) => {
 };
 
 const deleteFollow = async (req, res) => {
-  const { followerID, followedID } = req.body;
+  const { followedID } = req.body;
+  const followerID = req?.reqID;
 
   const follow = await findFollow(followedID, followerID);
 
