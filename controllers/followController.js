@@ -8,6 +8,7 @@ const {
   countFollowers,
   countFollowing,
 } = require("../service/follow.services");
+const { createNotification } = require("../service/notification.services");
 const { findAndUpdateUser } = require("../service/user.services");
 
 const getAllFollowers = async (req, res) => {
@@ -81,7 +82,8 @@ const getAllFollowing = async (req, res) => {
 };
 
 const createFollow = async (req, res) => {
-  const { followedID, followerID } = req.body;
+  const { followedID } = req.body;
+  const followerID = req?.reqID;
 
   if (!followedID || !followerID) {
     return res
@@ -126,6 +128,12 @@ const createFollow = async (req, res) => {
       .status(400)
       .json({ message: "Followed user's follower count not updated" });
   }
+
+  createNotification({
+    notifiedUser: followedID,
+    notifyingUser: followerID,
+    notificationType: "FOLLOW",
+  });
 
   return res.status(201).json({ message: "Followed user" });
 };
