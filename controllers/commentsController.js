@@ -5,6 +5,7 @@ const {
   findAndDeleteComment,
   findPostComments,
 } = require("../service/comment.services");
+const { createNotification } = require("../service/notification.services");
 
 const getComment = async (req, res) => {
   const id = req?.params?.id;
@@ -47,7 +48,8 @@ const getPostComments = async (req, res) => {
 };
 
 const createComment = async (req, res) => {
-  const { author, parentPostId, commentBody } = req.body;
+  const { parentPostId, commentBody } = req.body;
+  const author = req?.reqID;
 
   if (!author || !parentPostId || !commentBody) {
     return res.status(400).json({ message: "All parameters required" });
@@ -58,6 +60,10 @@ const createComment = async (req, res) => {
     parentPostId,
     commentBody
   );
+
+  if (!createdComment) {
+    return res.status(400).json({ message: "Invalid data recieved" });
+  }
 
   const updatePost = await findAndUpdatePost(
     parentPostId,
@@ -70,13 +76,16 @@ const createComment = async (req, res) => {
     return res.status(400).json({ message: "Post comment count not updated" });
   }
 
-  if (createdComment) {
-    res
-      .status(200)
-      .json({ message: `New comment created: ${createdComment._id}` });
-  } else {
-    res.status(400).json({ message: "Invalid data recieved" });
-  }
+  await createNotification({
+    notifiedUser: updatePost.user,
+    notifyingUser: author,
+    notificationType: "COMMENT",
+    post: parentPostId,
+  });
+
+  res
+    .status(200)
+    .json({ message: `New comment created: ${createdComment._id}` });
 };
 
 const deleteComment = async (req, res) => {
