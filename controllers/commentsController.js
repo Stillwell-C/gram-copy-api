@@ -6,6 +6,7 @@ const {
   findPostComments,
 } = require("../service/comment.services");
 const { createNotification } = require("../service/notification.services");
+const { findAndUpdatePost } = require("../service/post.services");
 
 const getComment = async (req, res) => {
   const id = req?.params?.id;
