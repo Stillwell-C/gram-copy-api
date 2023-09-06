@@ -16,8 +16,14 @@ const getNotifications = async (req, res) => {
   const totalNotifications = await countNotifications(reqID);
 
   if (page && limit) {
-    totalPages = math.ceil(totalNotifications / limit);
-    return res.json({ notifications, totalNotifications, limit, totalPages });
+    totalPages = Math.ceil(totalNotifications / limit);
+    return res.json({
+      notifications,
+      totalNotifications,
+      page,
+      limit,
+      totalPages,
+    });
   }
 
   res.json({ notifications, totalNotifications });
