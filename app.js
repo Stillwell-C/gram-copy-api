@@ -23,6 +23,7 @@ const createServer = () => {
   app.use("/postsave", require("./routes/postSaveRoutes"));
   app.use("/comments", require("./routes/commentRoutes"));
   app.use("/follow", require("./routes/followRoutes"));
+  app.use("/notifications", require("./routes/notificationsRoutes"));
 
   app.all("*", (req, res) => {
     res.status(404);
