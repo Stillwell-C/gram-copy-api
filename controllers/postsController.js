@@ -28,6 +28,13 @@ const getPost = async (req, res) => {
   }
 
   const reqID = req.reqID;
+
+  const validID = checkValidObjectID(req.params.id);
+
+  if (!validID) {
+    return res.status(400).json({ message: "Invalid post ID" });
+  }
+
   const post = await findPost({ _id: req.params.id });
 
   if (!post) {
@@ -43,8 +50,8 @@ const getPost = async (req, res) => {
     post.isLiked = like ? true : false;
     post.isSaved = save ? true : false;
 
-    if (user._id !== reqID) {
-      const follow = await findFollow(user._id, reqID);
+    if (post.user._id !== reqID) {
+      const follow = await findFollow(post.user._id, reqID);
       if (follow) post.isFollow = true;
     }
   }
