@@ -260,15 +260,6 @@ const updatePost = async (req, res) => {
 
     updatePost = await findAndUpdatePost(id, { ...updateObj });
   }
-  //The following will not update the timestamp
-  if (taggedUsers) {
-    if (taggedUsers.length > 20) {
-      return res.status(400).json({
-        message: "Cannot have more than 20 users",
-      });
-    }
-    updatePost = await findAndUpdatePost(id, taggedUsers, false);
-  }
 
   if (!updatedPost) {
     return res.status(400).json({ message: "Post not found" });
