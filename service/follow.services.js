@@ -1,10 +1,17 @@
 const Follow = require("../models/Follow");
 
 const findFollow = async (followedID, followerID) => {
+  const followerIdCheck = checkValidObjectID(followerID);
+  const followedIdCheck = checkValidObjectID(followedID);
+  if (!followerIdCheck || !followedIdCheck) return;
+
   return Follow.findOne({ followed: followedID, follower: followerID }).exec();
 };
 
 const findAllFollowers = async (userID, populate = false, page, limit) => {
+  const idCheck = checkValidObjectID(userID);
+  if (!idCheck) return;
+
   if (populate) {
     if (page || limit) {
       const pageInt = parseInt(page) || 1;
@@ -32,6 +39,9 @@ const findAllFollowers = async (userID, populate = false, page, limit) => {
 };
 
 const findAllFollowing = async (userID, populate = false, page, limit) => {
+  const idCheck = checkValidObjectID(userID);
+  if (!idCheck) return;
+
   if (populate) {
     if (page || limit) {
       const pageInt = parseInt(page) || 1;
@@ -59,18 +69,31 @@ const findAllFollowing = async (userID, populate = false, page, limit) => {
 };
 
 const createNewFollow = async (followedID, followerID) => {
+  const followerIdCheck = checkValidObjectID(followerID);
+  const followedIdCheck = checkValidObjectID(followedID);
+  if (!followerIdCheck || !followedIdCheck) return;
+
   return Follow.create({ followed: followedID, follower: followerID });
 };
 
 const findAndDeleteFollow = async (followID) => {
+  const idCheck = checkValidObjectID(followID);
+  if (!idCheck) return;
+
   return Follow.findByIdAndDelete(followID);
 };
 
 const countFollowers = async (userID) => {
+  const idCheck = checkValidObjectID(userID);
+  if (!idCheck) return;
+
   return Follow.countDocuments({ followed: userID });
 };
 
 const countFollowing = async (userID) => {
+  const idCheck = checkValidObjectID(userID);
+  if (!idCheck) return;
+
   return Follow.countDocuments({ follower: userID });
 };
 
