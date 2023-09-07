@@ -9,18 +9,27 @@ const findSingleUser = async (query) => {
 };
 
 const findUserWithPassword = async (query) => {
-  return User.find(query).lean().exec();
+  return User.findOne(query).lean().exec();
 };
 
 const findUserById = async (userId) => {
+  const idCheck = checkValidObjectID(userId);
+  if (!idCheck) return;
+
   return User.findById(userId).select("-password").lean().exec();
 };
 
 const findUserByIdWithPassword = async (userId) => {
+  const idCheck = checkValidObjectID(userId);
+  if (!idCheck) return;
+
   return User.findById(userId).lean().exec();
 };
 
 const findUserByIdMinimalData = async (userId) => {
+  const idCheck = checkValidObjectID(userId);
+  if (!idCheck) return;
+
   return User.findById(userId)
     .select("username")
     .select("fullname")
@@ -92,6 +101,9 @@ const generateNewUser = async (newUser) => {
 };
 
 const findAndUpdateUser = async (id, updateObj) => {
+  const idCheck = checkValidObjectID(id);
+  if (!idCheck) return;
+
   return User.findOneAndUpdate({ _id: id }, { ...updateObj }, { new: true });
 };
 
@@ -100,6 +112,9 @@ const findAndUpdateArr = async (id, arrCommand) => {
 };
 
 const findAndDeleteUser = async (id) => {
+  const idCheck = checkValidObjectID(id);
+  if (!idCheck) return;
+
   return User.findByIdAndDelete(id).exec();
 };
 
