@@ -23,7 +23,7 @@ const getAllLikedUsers = async (req, res) => {
 };
 
 const getUsersLikedPosts = async (req, res) => {
-  const { id } = req.params;
+  const id = req?.reqID;
   const { page, limit } = req?.query;
 
   const likedPosts = await findUsersLikedPosts(id, true, page, limit);

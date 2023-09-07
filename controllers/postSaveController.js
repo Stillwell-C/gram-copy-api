@@ -25,7 +25,7 @@ const getAllSavedUsers = async (req, res) => {
 };
 
 const getUsersSavedPosts = async (req, res) => {
-  const { id } = req.params;
+  const id = req?.reqID;
   const { page, limit } = req?.query;
 
   const savedPosts = await findUsersSavedPosts(id, true, page, limit);
@@ -61,7 +61,7 @@ const getUsersSavedPosts = async (req, res) => {
 };
 
 const createPostSave = async (req, res) => {
-  const { userID } = req.body;
+  const userID = req?.reqID;
   const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
@@ -86,7 +86,7 @@ const createPostSave = async (req, res) => {
 };
 
 const deletePostSave = async (req, res) => {
-  const { userID } = req.body;
+  const userID = req?.reqID;
   const parentPostID = req.params?.id;
 
   if (!userID || !parentPostID) {
