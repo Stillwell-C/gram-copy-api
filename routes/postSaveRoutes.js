@@ -8,6 +8,6 @@ router
   .post(postSaveController.createPostSave)
   .delete(postSaveController.deletePostSave);
 
-router.route("/user/:id/").get(postSaveController.getUsersSavedPosts);
+router.route("/user/").get(postSaveController.getUsersSavedPosts);
 
 module.exports = router;

@@ -9,8 +9,6 @@ router
   .post(verifyJWT, postLikeController.createPostLike)
   .delete(verifyJWT, postLikeController.deletePostLike);
 
-router
-  .route("/user/:id/")
-  .get(verifyJWT, postLikeController.getUsersLikedPosts);
+router.route("/user/").get(verifyJWT, postLikeController.getUsersLikedPosts);
 
 module.exports = router;
