@@ -81,8 +81,8 @@ const verifyUsersPassword = async (enteredPassword, userID) => {
       console.log(err);
       return true;
     }
+    return true;
   }
-  return true;
 };
 
 const exportFunctions = {
