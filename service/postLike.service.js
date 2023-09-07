@@ -5,6 +5,9 @@ const findPostLike = async (user, post) => {
 };
 
 const findAllLikedUsers = async (postID, populate = false, page, limit) => {
+  const idCheck = checkValidObjectID(postID);
+  if (!idCheck) return;
+
   if (populate) {
     if (page || limit) {
       const pageInt = parseInt(page) || 1;
@@ -35,6 +38,9 @@ const findAllLikedUsers = async (postID, populate = false, page, limit) => {
 };
 
 const findUsersLikedPosts = async (userID, populate = false, page, limit) => {
+  const idCheck = checkValidObjectID(userID);
+  if (!idCheck) return;
+
   if (populate) {
     if (page || limit) {
       const pageInt = parseInt(page) || 1;
@@ -65,6 +71,9 @@ const findUsersLikedPosts = async (userID, populate = false, page, limit) => {
 };
 
 const createNewPostLike = async (user, post) => {
+  const idCheck = checkValidObjectID(post);
+  if (!idCheck) return;
+
   return PostLike.create({ user, post });
 };
 
