@@ -5,6 +5,9 @@ const findPostSave = async (user, post) => {
 };
 
 const findAllSavedUsers = async (postID, populate = false, page, limit) => {
+  const idCheck = checkValidObjectID(postID);
+  if (!idCheck) return;
+
   if (populate) {
     if (page || limit) {
       const pageInt = parseInt(page) || 1;
@@ -35,6 +38,9 @@ const findAllSavedUsers = async (postID, populate = false, page, limit) => {
 };
 
 const findUsersSavedPosts = async (userID, populate = false, page, limit) => {
+  const idCheck = checkValidObjectID(userID);
+  if (!idCheck) return;
+
   if (populate) {
     if (page || limit) {
       const pageInt = parseInt(page) || 1;
@@ -81,6 +87,9 @@ const findUsersSavedPosts = async (userID, populate = false, page, limit) => {
 };
 
 const createNewPostSave = async (user, post) => {
+  const idCheck = checkValidObjectID(post);
+  if (!idCheck) return;
+
   return PostSave.create({ user, post });
 };
 
