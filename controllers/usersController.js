@@ -171,12 +171,9 @@ const createNewUser = async (req, res) => {
 };
 
 const updateUserInfo = async (req, res) => {
-  if (!req?.body?.id) {
-    return res.status(400).json({ message: "User ID parameter required" });
-  }
+  const id = req?.reqID;
 
   const {
-    id,
     username,
     oldPassword,
     newPassword,
@@ -187,6 +184,10 @@ const updateUserInfo = async (req, res) => {
     fullname,
     userImgKey,
   } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ message: "User ID parameter required" });
+  }
 
   if (
     !username &&
@@ -292,7 +293,8 @@ const updateUserInfo = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { id, adminPassword, userPassword } = req.body;
+  const id = req?.reqID;
+  const { adminPassword, userPassword } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "User ID required" });
