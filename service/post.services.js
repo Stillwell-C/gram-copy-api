@@ -39,6 +39,9 @@ const findMultiplePosts = async (page, limit, queryArr) => {
 };
 
 const findTaggedPosts = async (userID, page, limit) => {
+  const idCheck = checkValidObjectID(userID);
+  if (!idCheck) return;
+
   if (page || limit) {
     const pageInt = parseInt(page) || 1;
     const limitInt = parseInt(limit) || 12;
@@ -72,6 +75,9 @@ const findAndUpdatePost = async (
   updatedPostData,
   timestamps = true
 ) => {
+  const idCheck = checkValidObjectID(postId);
+  if (!idCheck) return;
+
   //Update timestamps when user updates post, but not in the case of likes, etc.
   if (timestamps) {
     return Post.findOneAndUpdate(
@@ -108,6 +114,9 @@ const findAndRemoveTaggedUser = async (postID, userID) => {
 };
 
 const findAndDeletePost = async (postId) => {
+  const idCheck = checkValidObjectID(postId);
+  if (!idCheck) return;
+
   return Post.findByIdAndDelete(postId).exec();
 };
 

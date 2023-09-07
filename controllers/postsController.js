@@ -77,6 +77,13 @@ const getMultiplePosts = async (req, res) => {
       queryArr.push(followedUser.followed._id);
     }
   } else if (userID?.length) {
+    const idCheck = checkValidObjectID(userID);
+    if (!idCheck) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+      });
+    }
+
     queryArr.push(userID);
   }
 
@@ -279,11 +286,12 @@ const updateTaggedUsers = async (req, res) => {
     });
   }
 
-  const idParse = checkValidObjectID(userID);
+  const userIdParse = checkValidObjectID(userID);
+  const postIdParse = checkValidObjectID(postID);
 
-  if (!idParse) {
+  if (!userIdParse || !postIdParse) {
     return res.status(400).json({
-      message: "Must include valid user ID",
+      message: "Must include valid user ID and post ID",
     });
   }
 
