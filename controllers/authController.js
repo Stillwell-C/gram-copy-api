@@ -19,7 +19,7 @@ const login = async (req, res) => {
       .json({ message: "Username or email and password required" });
   }
 
-  const [user] = await findUserWithPassword({
+  const user = await findUserWithPassword({
     $or: [{ username: userIdentifier }, { email: userIdentifier }],
   });
 
