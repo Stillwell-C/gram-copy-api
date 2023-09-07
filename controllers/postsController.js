@@ -351,10 +351,21 @@ const deletePost = async (req, res) => {
     return res.status(400).json({ message: "Img Key required" });
   }
 
+  const postCheck = await findPost({ _id: id });
+
+  if (!postCheck) {
+    return res.status(400).json({ message: "Post not found" });
+  }
+  if (postCheck.user._id !== req.reqID) {
+    return res
+      .status(401)
+      .json({ message: "You are not authorized to delete this post" });
+  }
+
   const deletedPost = await findAndDeletePost(id);
 
   if (!deletedPost) {
-    return res.status(400).json({ message: "Post not found" });
+    return res.status(400).json({ message: "An error occurred." });
   }
 
   const updatedUser = await findAndUpdateUser(
