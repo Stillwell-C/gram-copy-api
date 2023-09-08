@@ -121,7 +121,7 @@ const logout = (req, res) => {
   res.json({ message: "Cookie cleared" });
 };
 
-const getImgCloudSignature = async (req, res) => {
+const getImgCloudSignature = (req, res) => {
   const timestamp = Math.round(new Date().getTime() / 1000);
   const signature = generateSignature(timestamp);
   res.json({ timestamp, signature });
