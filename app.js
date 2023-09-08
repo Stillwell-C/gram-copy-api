@@ -24,6 +24,7 @@ const createServer = () => {
   app.use("/comments", require("./routes/commentRoutes"));
   app.use("/follow", require("./routes/followRoutes"));
   app.use("/notifications", require("./routes/notificationsRoutes"));
+  app.use("/reports", require("./routes/reportRoutes"));
 
   app.all("*", (req, res) => {
     res.status(404);
