@@ -24,6 +24,8 @@ const generateExpectedSignature = (public_id, version) => {
 };
 
 const deleteImageFromCloudinary = (imageKey) => {
+  if (imageKey.match(/Default_pfp_k1yn4m/i)) return;
+
   const public_id = imageKey.split(".");
   cloudinary.api.delete_resources(public_id[0], {
     type: "upload",
