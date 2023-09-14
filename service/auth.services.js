@@ -83,6 +83,7 @@ const verifyUsersPassword = async (enteredPassword, userID) => {
     }
     return true;
   }
+  return true;
 };
 
 const exportFunctions = {
