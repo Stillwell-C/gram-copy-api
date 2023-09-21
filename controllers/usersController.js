@@ -45,6 +45,7 @@ const getUser = async (req, res) => {
   const userObj = user.toObject();
 
   userObj.isFollow = false;
+  delete userObj.email;
 
   const reqID = req.reqID;
   if (reqID && user._id !== reqID) {
