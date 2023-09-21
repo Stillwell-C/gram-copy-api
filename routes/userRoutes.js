@@ -10,6 +10,8 @@ router
   .patch(verifyJWT, usersController.updateUserInfo)
   .delete(verifyJWT, usersController.deleteUser);
 
+router.route("/userData").get(verifyJWT, usersController.getOwnUserData);
+
 router.route("/:id").get(usersController.getUser);
 
 router.route("/search/:searchQuery").get(usersController.searchUsers);
