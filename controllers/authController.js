@@ -27,6 +27,12 @@ const login = async (req, res) => {
     return res.status(401).json({ message: "User not found" });
   }
 
+  if (user.banned) {
+    return res
+      .status(401)
+      .json({ message: "This account has been permanently banned." });
+  }
+
   // const rateLimitUser = await consecutivePasswordFailLimiter.get(user.username);
 
   // if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 5) {
