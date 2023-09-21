@@ -48,6 +48,14 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    urlLink: {
+      type: String,
+      default: "",
+    },
+    urlLinkText: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
