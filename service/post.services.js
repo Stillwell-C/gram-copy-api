@@ -30,7 +30,7 @@ const findMultiplePosts = async (page, limit, queryArr) => {
       .populate("user", "_id username userImgKey")
       .exec();
   } else {
-    return Post.find()
+    return Post.find(query)
       .sort("-createdAt")
       .lean()
       .select("-likedUsers")
@@ -133,6 +133,14 @@ const countTaggedPosts = async (userID) => {
   return Post.countDocuments({ taggedUsers: userID });
 };
 
+const findAndDeleteAllUserPosts = async (userID) => {
+  const posts = await Post.find({ user: userID });
+
+  for (const post of posts) {
+    await findAndDeletePost(post._id);
+  }
+};
+
 module.exports = {
   findPost,
   findMultiplePosts,
@@ -144,4 +152,5 @@ module.exports = {
   findAndDeletePost,
   countPosts,
   countTaggedPosts,
+  findAndDeleteAllUserPosts,
 };
