@@ -55,6 +55,7 @@ const findMultipleUsers = async (page, limit) => {
       .limit(limitInt)
       .skip(postsSkip)
       .select("-password")
+      .select("-email")
       .lean()
       .exec();
   } else {
