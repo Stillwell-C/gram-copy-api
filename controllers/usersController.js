@@ -57,6 +57,22 @@ const getUser = async (req, res) => {
   res.json(userObj);
 };
 
+const getOwnUserData = async (req, res) => {
+  if (!req.reqID) {
+    return res
+      .status(401)
+      .json({ message: "Must be signed in to access this data" });
+  }
+
+  const user = await findUserById(req.reqID);
+
+  if (!user) {
+    return res.status(400).json({ message: `User not found` });
+  }
+
+  res.json(user);
+};
+
 const emailAvailability = async (req, res) => {
   if (!req?.params?.email) {
     return res.status(400).json({ message: "User email required" });
@@ -340,6 +356,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getUser,
+  getOwnUserData,
   getUsersFromArr,
   getAllUsers,
   emailAvailability,
