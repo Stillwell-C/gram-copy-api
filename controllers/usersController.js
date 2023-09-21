@@ -8,6 +8,7 @@ const {
 const { deleteImageFromCloudinary } = require("../service/cloudinary.services");
 const { findFollow } = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
+const { findAndDeleteAllUserPosts } = require("../service/post.services");
 const {
   duplicateEmailCheck,
   duplicateUsernameCheck,
@@ -329,6 +330,8 @@ const deleteUser = async (req, res) => {
   if (!deletedUser) {
     return res.status(400).json({ message: "User not found" });
   }
+
+  await findAndDeleteAllUserPosts(id);
 
   res.json({
     message: `User ${deletedUser.username} successfully deleted`,
