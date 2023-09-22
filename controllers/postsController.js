@@ -17,6 +17,8 @@ const {
   findTaggedPosts,
   findAndAddTaggedUser,
   findAndRemoveTaggedUser,
+  countSearchedPosts,
+  findSearchedPosts,
 } = require("../service/post.services");
 const { findPostLike } = require("../service/postLike.service");
 const { findPostSave } = require("../service/postSave.service");
@@ -140,6 +142,46 @@ const getTaggedPosts = async (req, res) => {
   if (!posts?.length)
     return res.status(400).json({ message: "No posts found" });
 
+  if (reqID) {
+    for (const post of posts) {
+      const like = await findPostLike(reqID, post._id);
+      const save = await findPostSave(reqID, post._id);
+      let follow = false;
+      if (post.user._id !== reqID)
+        follow = await findFollow(post.user._id, reqID);
+
+      post.isLiked = like ? true : false;
+      post.isSaved = save ? true : false;
+      post.isFollow = follow ? true : false;
+    }
+  } else {
+    for (const post of posts) {
+      post.isLiked = false;
+      post.isSaved = false;
+      post.isFollow = false;
+    }
+  }
+
+  if (page && limit) {
+    const totalPages = Math.ceil(totalPosts / limit);
+    return res.json({ posts, totalPosts, limit, totalPages });
+  }
+
+  res.json({ posts, totalPosts });
+};
+
+const searchPosts = async (req, res) => {
+  const { page, limit, param, query } = req.query;
+  const reqID = req.reqID;
+
+  const posts = await findSearchedPosts(param, query, page, limit);
+
+  const totalPosts = await countSearchedPosts(param, query);
+
+  if (!posts?.length)
+    return res.status(400).json({ message: "No posts found" });
+
+  //This works but has slowed down process. May be unavoidable
   if (reqID) {
     for (const post of posts) {
       const like = await findPostLike(reqID, post._id);
@@ -378,6 +420,7 @@ const deletePost = async (req, res) => {
 module.exports = {
   getPost,
   getMultiplePosts,
+  searchPosts,
   getTaggedPosts,
   createNewPost,
   updatePost,
