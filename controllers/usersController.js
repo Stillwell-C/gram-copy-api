@@ -22,6 +22,7 @@ const {
   findUserByIdMinimalData,
   findUserByIdWithPassword,
   findSingleUser,
+  countSearchedUsers,
 } = require("../service/user.services");
 const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
 
@@ -139,7 +140,9 @@ const searchUsers = async (req, res) => {
 
   if (!results) return res.status(404).json({ message: "No results found" });
 
-  res.json({ users: results });
+  const totalUsers = await countSearchedUsers(searchQuery);
+
+  res.json({ users: results, totalUsers });
 };
 
 const createNewUser = async (req, res) => {
