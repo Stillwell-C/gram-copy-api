@@ -11,10 +11,12 @@ router
   .patch(verifyJWT, postController.updatePost)
   .delete(verifyJWT, postController.deletePost);
 
-router.route("/:id").get(postController.getPost);
+router.route("/search").get(postController.searchPosts);
 
 router.route("/tagged").patch(verifyJWT, postController.updateTaggedUsers);
 
 router.route("/tagged/:userID").get(postController.getTaggedPosts);
+
+router.route("/:id").get(postController.getPost);
 
 module.exports = router;
