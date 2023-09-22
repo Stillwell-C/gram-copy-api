@@ -90,6 +90,22 @@ const searchUser = async (searchQuery, page, limit) => {
     .select("fullname");
 };
 
+const countSearchedUsers = async (searchQuery) => {
+  return User.countDocuments({
+    $or: [
+      {
+        fullname: { $regex: searchQuery, $options: "i" },
+        banned: { $ne: true },
+      },
+      {
+        username: { $regex: searchQuery, $options: "i" },
+        banned: { $ne: true },
+      },
+      { email: { $regex: searchQuery, $options: "i" }, banned: { $ne: true } },
+    ],
+  });
+};
+
 const duplicateUsernameCheck = async (username) => {
   return User.findOne({ username })
     .collation({ locale: "en", strength: 2 })
@@ -136,6 +152,7 @@ module.exports = {
   findUserByUsernameWithoutPassword,
   findMultipleUsers,
   searchUser,
+  countSearchedUsers,
   duplicateUsernameCheck,
   duplicateEmailCheck,
   generateNewUser,
