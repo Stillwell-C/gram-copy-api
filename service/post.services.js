@@ -141,6 +141,30 @@ const findAndDeleteAllUserPosts = async (userID) => {
   }
 };
 
+const findSearchedPosts = async (searchParam, searchQuery, page, limit) => {
+  const pageInt = parseInt(page) || 1;
+  const limitInt = parseInt(limit) || 10;
+
+  const postsSkip = (pageInt - 1) * limitInt;
+
+  return Post.find({
+    [searchParam]: { $regex: searchQuery, $options: "i" },
+  })
+    .sort("-createdAt")
+    .limit(limitInt)
+    .skip(postsSkip)
+    .lean()
+    .select("-likedUsers")
+    .populate("user", "_id username userImgKey")
+    .exec();
+};
+
+const countSearchedPosts = async (searchParam, searchQuery) => {
+  return Post.countDocuments({
+    [searchParam]: { $regex: searchQuery, $options: "i" },
+  });
+};
+
 module.exports = {
   findPost,
   findMultiplePosts,
@@ -153,4 +177,6 @@ module.exports = {
   countPosts,
   countTaggedPosts,
   findAndDeleteAllUserPosts,
+  findSearchedPosts,
+  countSearchedPosts,
 };
