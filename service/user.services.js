@@ -71,9 +71,15 @@ const searchUser = async (searchQuery, page, limit) => {
 
   return User.find({
     $or: [
-      { fullname: { $regex: searchQuery, $options: "i" } },
-      { username: { $regex: searchQuery, $options: "i" } },
-      { email: { $regex: searchQuery, $options: "i" } },
+      {
+        fullname: { $regex: searchQuery, $options: "i" },
+        banned: { $ne: true },
+      },
+      {
+        username: { $regex: searchQuery, $options: "i" },
+        banned: { $ne: true },
+      },
+      { email: { $regex: searchQuery, $options: "i" }, banned: { $ne: true } },
     ],
   })
     .limit(limitInt)
