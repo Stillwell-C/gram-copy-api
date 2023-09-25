@@ -145,6 +145,11 @@ const searchUsers = async (req, res) => {
 
   const totalUsers = await countSearchedUsers(searchQuery);
 
+  if (page && limit) {
+    const totalPages = Math.ceil(totalUsers / limit);
+    return res.json({ users: results, totalUsers, limit, page, totalPages });
+  }
+
   res.json({ users: results, totalUsers });
 };
 
