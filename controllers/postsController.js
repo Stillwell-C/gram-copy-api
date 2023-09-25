@@ -119,7 +119,7 @@ const getMultiplePosts = async (req, res) => {
 
   if (page && limit) {
     const totalPages = Math.ceil(totalPosts / limit);
-    return res.json({ posts, totalPosts, limit, totalPages });
+    return res.json({ posts, totalPosts, limit, page, totalPages });
   }
 
   res.json({ posts, totalPosts });
@@ -164,7 +164,7 @@ const getTaggedPosts = async (req, res) => {
 
   if (page && limit) {
     const totalPages = Math.ceil(totalPosts / limit);
-    return res.json({ posts, totalPosts, limit, totalPages });
+    return res.json({ posts, totalPosts, limit, page, totalPages });
   }
 
   res.json({ posts, totalPosts });
@@ -204,7 +204,7 @@ const searchPosts = async (req, res) => {
 
   if (page && limit) {
     const totalPages = Math.ceil(totalPosts / limit);
-    return res.json({ posts, totalPosts, limit, totalPages });
+    return res.json({ posts, totalPosts, limit, page, totalPages });
   }
 
   res.json({ posts, totalPosts });
