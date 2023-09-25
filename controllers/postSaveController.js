@@ -53,6 +53,7 @@ const getUsersSavedPosts = async (req, res) => {
       posts: formattedSavedPosts,
       totalPosts: totalSavedPosts,
       limit,
+      page,
       totalPages,
     });
   }
