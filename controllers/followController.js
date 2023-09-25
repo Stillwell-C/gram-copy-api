@@ -21,14 +21,18 @@ const getAllFollowers = async (req, res) => {
   if (!followers) {
     return res.status(400).json({ message: "No followers found" });
   }
+  console.log(followers);
 
   if (reqID) {
     for (const follower of followers) {
       let follow = false;
-      if (follower.follower._id !== reqID)
-        follow = await findFollow(follower.follower._id, reqID);
+      if (follower?.follower?._id) {
+        if (follower?.follower?._id !== reqID) {
+          follow = await findFollow(follower?.follower?._id, reqID);
+        }
 
-      follower.follower.isFollow = follow ? true : false;
+        follower.follower.isFollow = follow ? true : false;
+      }
     }
   } else {
     for (const follower of followers) {
@@ -60,10 +64,12 @@ const getAllFollowing = async (req, res) => {
   if (reqID) {
     for (const followedUser of following) {
       let follow = false;
-      if (followedUser.followed._id !== reqID)
-        follow = await findFollow(followedUser.followed._id, reqID);
+      if (followedUser?.followed?._id) {
+        if (followedUser.followed._id !== reqID)
+          follow = await findFollow(followedUser.followed._id, reqID);
 
-      followedUser.followed.isFollow = follow ? true : false;
+        followedUser.followed.isFollow = follow ? true : false;
+      }
     }
   } else {
     for (const followedUser of following) {
