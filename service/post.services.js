@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const { deleteImageFromCloudinary } = require("./cloudinary.services");
 const { checkValidObjectID } = require("./mongoose.services");
 
 const findPost = async (query) => {
@@ -137,7 +138,8 @@ const findAndDeleteAllUserPosts = async (userID) => {
   const posts = await Post.find({ user: userID });
 
   for (const post of posts) {
-    await findAndDeletePost(post._id);
+    const post = await findAndDeletePost(post._id);
+    deleteImageFromCloudinary(post.imgKey);
   }
 };
 
