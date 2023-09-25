@@ -84,6 +84,12 @@ const login = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
+  res.cookie("loggedIn", "true", {
+    sameSite: "None",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    secure: true,
+  });
+
   //Send accessToken
   res.json({ accessToken });
 };
@@ -117,6 +123,12 @@ const refresh = async (req, res) => {
     verifiedUser?.fullname
   );
 
+  res.cookie("loggedIn", "true", {
+    secure: true,
+    sameSite: "None",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   res.json({ accessToken });
 };
 
@@ -124,6 +136,11 @@ const logout = (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  res.clearCookie("loggedIn", {
+    httpOnly: false,
+    secure: false,
+    sameSite: "None",
+  });
   res.json({ message: "Cookie cleared" });
 };
 
