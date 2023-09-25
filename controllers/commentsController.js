@@ -42,7 +42,7 @@ const getPostComments = async (req, res) => {
 
   if (page && limit) {
     const totalPages = Math.ceil(totalComments / limit);
-    return res.json({ comments, totalComments, limit, totalPages });
+    return res.json({ comments, totalComments, limit, page, totalPages });
   }
 
   res.json({ comments, totalComments });
