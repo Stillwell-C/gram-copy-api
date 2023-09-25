@@ -6,7 +6,12 @@ const {
   verifyUsersPassword,
 } = require("../service/auth.services");
 const { deleteImageFromCloudinary } = require("../service/cloudinary.services");
-const { findFollow } = require("../service/follow.services");
+const {
+  findFollow,
+  findAndDeleteFollow,
+  findAllFollowing,
+  findAllFollowers,
+} = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
 const { findAndDeleteAllUserPosts } = require("../service/post.services");
 const {
@@ -20,8 +25,6 @@ const {
   findUserByUsernameWithoutPassword,
   searchUser,
   findUserByIdMinimalData,
-  findUserByIdWithPassword,
-  findSingleUser,
   countSearchedUsers,
 } = require("../service/user.services");
 const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
@@ -350,9 +353,31 @@ const deleteUser = async (req, res) => {
     return res.status(400).json({ message: "User not found" });
   }
 
+  //Delete user posts
   await findAndDeleteAllUserPosts(id);
 
-  res.json({
+  //Delete all instances of user follows
+  const following = await findAllFollowing(id);
+
+  for (const follow of following) {
+    await findAndUpdateUser(follow.followed, {
+      $inc: { followerNo: -1 },
+    });
+
+    await findAndDeleteFollow(follow._id);
+  }
+
+  const followers = await findAllFollowers(id);
+
+  for (const follow of followers) {
+    await findAndUpdateUser(follow.follower, {
+      $inc: { followingNo: -1 },
+    });
+
+    await findAndDeleteFollow(follow._id);
+  }
+
+  res.status(200).json({
     message: `User ${deletedUser.username} successfully deleted`,
   });
 };
