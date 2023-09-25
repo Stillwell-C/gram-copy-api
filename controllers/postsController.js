@@ -69,7 +69,7 @@ const getMultiplePosts = async (req, res) => {
   if (followingFeed === "true") {
     const following = await findAllFollowing(reqID);
 
-    if (!following.length) {
+    if (!following || !following?.length) {
       return res.status(400).json({
         message: "User has no feed because not following other users",
       });
