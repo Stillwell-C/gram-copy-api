@@ -21,7 +21,6 @@ const getAllFollowers = async (req, res) => {
   if (!followers) {
     return res.status(400).json({ message: "No followers found" });
   }
-  console.log(followers);
 
   if (reqID) {
     for (const follower of followers) {
