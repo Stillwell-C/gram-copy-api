@@ -34,9 +34,17 @@ const getUsersSavedPosts = async (req, res) => {
     return res.status(400).json({ message: "No saved posts found" });
   }
 
-  const formattedSavedPosts = savedPosts.map((savedPost) => ({
-    ...savedPost.post,
-  }));
+  const formattedSavedPosts = savedPosts
+    .map((savedPost) => ({
+      ...savedPost.post,
+    }))
+    .filter((formattedPost) => {
+      if (Object.keys(formattedPost).length !== 0) {
+        return true;
+      }
+
+      return false;
+    });
 
   for (const post of formattedSavedPosts) {
     const like = await findPostLike(id, post._id);
