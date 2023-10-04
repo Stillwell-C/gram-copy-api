@@ -389,7 +389,8 @@ const deletePost = async (req, res) => {
   if (!postCheck) {
     return res.status(400).json({ message: "Post not found" });
   }
-  if (postCheck.user._id !== req.reqID) {
+
+  if (postCheck.user._id.toString() !== req.reqID) {
     return res
       .status(401)
       .json({ message: "You are not authorized to delete this post" });
