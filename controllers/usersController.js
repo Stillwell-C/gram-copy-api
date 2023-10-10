@@ -2,7 +2,6 @@ const User = require("../models/User");
 const {
   hashPassword,
   generateAccessToken,
-  comparePasswords,
   verifyUsersPassword,
 } = require("../service/auth.services");
 const { deleteImageFromCloudinary } = require("../service/cloudinary.services");
@@ -27,7 +26,6 @@ const {
   findUserByIdMinimalData,
   countSearchedUsers,
 } = require("../service/user.services");
-const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
 
 const getUser = async (req, res) => {
   if (!req?.params?.id)
@@ -252,21 +250,6 @@ const updateUserInfo = async (req, res) => {
     updateObj.email = email;
   }
   if (newPassword && oldPassword) {
-    // const user = await findUserByIdWithPassword(id);
-
-    // const rateLimitUser = await consecutivePasswordFailLimiter.get(
-    //   user.username
-    // );
-
-    // if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 5) {
-    //   return res.status(429).json({
-    //     message:
-    //       "Too many attempts with wrong password. Wait 15 minutes before trying again.",
-    //   });
-    // }
-
-    // const passwordMatch = await comparePasswords(oldPassword, user.password);
-
     const passwordMatch = await verifyUsersPassword(oldPassword, id);
 
     if (passwordMatch === "EXCEEDED") {
@@ -291,14 +274,6 @@ const updateUserInfo = async (req, res) => {
     previousImgKey = user.userImgKey;
   }
   if (userBio) updateObj.userBio = userBio;
-
-  //Fields not requiring special processing
-  // const updateFields = [{ roles }, { banned }, { fullname }, { userImgKey }];
-  // for (const [key, value] of Object.entries(updateFields)) {
-  //   if (key && value) {
-  //     updateObj[key] = value;
-  //   }
-  // }
 
   const updatedUser = await findAndUpdateUser(id, updateObj);
 
