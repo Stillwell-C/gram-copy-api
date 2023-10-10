@@ -1,13 +1,11 @@
 require("dotenv").config();
 const { findUserWithPassword } = require("../service/user.services");
 const {
-  comparePasswords,
   generateAccessToken,
   generateRefreshToken,
   verifyJWTAndReturnUser,
   verifyUsersPassword,
 } = require("../service/auth.services");
-const { consecutivePasswordFailLimiter } = require("../utils/rateLimiter");
 const { generateSignature } = require("../service/cloudinary.services");
 
 const login = async (req, res) => {
@@ -32,25 +30,6 @@ const login = async (req, res) => {
       .status(401)
       .json({ message: "This account has been permanently banned." });
   }
-
-  // const rateLimitUser = await consecutivePasswordFailLimiter.get(user.username);
-
-  // if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 5) {
-  //   return res.status(429).json({
-  //     message:
-  //       "Too many attempts with wrong password. Wait 15 minutes before trying again.",
-  //   });
-  // }
-
-  // const passwordMatch = await comparePasswords(password, user.password);
-
-  // if (!passwordMatch) {
-  //   await consecutivePasswordFailLimiter.consume(user.username);
-
-  //   return res.status(401).json({ message: "Password incorrect" });
-  // } else if (rateLimitUser !== null && rateLimitUser?.consumedPoints > 0) {
-  //   await consecutivePasswordFailLimiter.delete(user.username);
-  // }
 
   const passwordMatch = await verifyUsersPassword(password, user._id);
 
