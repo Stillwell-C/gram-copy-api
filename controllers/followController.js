@@ -1,4 +1,3 @@
-const Follow = require("../models/Follow");
 const {
   findAllFollowers,
   findAllFollowing,
