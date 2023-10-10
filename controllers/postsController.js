@@ -1,9 +1,7 @@
-const Post = require("../models/Post");
 const {
   generateExpectedSignature,
   deleteImageFromCloudinary,
 } = require("../service/cloudinary.services");
-const { countComments } = require("../service/comment.services");
 const { findFollow, findAllFollowing } = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
 const {
