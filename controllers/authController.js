@@ -57,7 +57,7 @@ const login = async (req, res) => {
   res.cookie("jwt", refreshToken, {
     //Change later to https
     //Not accessible to JS
-    httpsOnly: true,
+    httpOnly: true,
     secure: true,
     sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -114,7 +114,7 @@ const refresh = async (req, res) => {
 const logout = (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
-  res.clearCookie("jwt", { httpsOnly: true, sameSite: "None", secure: true });
+  res.clearCookie("jwt", { httpsnly: true, sameSite: "None", secure: true });
   res.clearCookie("loggedIn", {
     secure: true,
     sameSite: "None",
