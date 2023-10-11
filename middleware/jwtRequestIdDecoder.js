@@ -4,7 +4,7 @@ const jwtReqestIdDecoder = (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
   const cookies = req.headers.cookie;
 
-  if (!req.originalURL.match(/^\/auth\/refresh/i)) {
+  if (!req.path.match(/^\/auth\/refresh/i)) {
     if (cookies?.loggedIn && !authHeader?.includes("Bearer ")) {
       return res.status(403).json({ message: "Forbidden" });
     }
