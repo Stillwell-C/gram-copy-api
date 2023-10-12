@@ -131,7 +131,6 @@ const getTaggedPosts = async (req, res) => {
   const { page, limit } = req.query;
   const { userID } = req.params;
   const reqID = req.reqID;
-  console.log(reqID);
 
   if (!userID) {
     return res.status(400).json({ message: "Must include userID" });
