@@ -37,7 +37,7 @@ const getUser = async (req, res) => {
   if (idParse) {
     user = await findUserById(req.params.id);
   }
-  if (!user._id) {
+  if (!user?._id) {
     user = await findUserByUsernameWithoutPassword(req.params.id);
   }
 
