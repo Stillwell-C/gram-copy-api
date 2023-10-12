@@ -65,6 +65,10 @@ const getMultiplePosts = async (req, res) => {
 
   let queryArr = [];
   if (followingFeed === "true") {
+    if (!reqID) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const following = await findAllFollowing(reqID);
 
     if (!following || !following?.length) {
