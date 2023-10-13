@@ -167,6 +167,11 @@ const countSearchedPosts = async (searchParam, searchQuery) => {
   });
 };
 
+const confirmPostAuthor = async (postID, userID) => {
+  const post = await Post.findById(postID).lean.select("user");
+  return post?.user?.toString() === userID;
+};
+
 module.exports = {
   findPost,
   findMultiplePosts,
@@ -181,4 +186,5 @@ module.exports = {
   findAndDeleteAllUserPosts,
   findSearchedPosts,
   countSearchedPosts,
+  confirmPostAuthor,
 };
