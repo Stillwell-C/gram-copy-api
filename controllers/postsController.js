@@ -17,6 +17,7 @@ const {
   findAndRemoveTaggedUser,
   countSearchedPosts,
   findSearchedPosts,
+  confirmPostAuthor,
 } = require("../service/post.services");
 const { findPostLike } = require("../service/postLike.service");
 const { findPostSave } = require("../service/postSave.service");
@@ -281,6 +282,13 @@ const createNewPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   const { id, altText, caption, location } = req.body;
+
+  const authorAuthentication = confirmPostAuthor(id, req?.reqID);
+  if (!authorAuthentication) {
+    return res
+      .status(403)
+      .json({ message: "Please log in before editing post" });
+  }
 
   if (!id) {
     return res.status(400).json({ message: "Post ID parameter required" });
