@@ -282,6 +282,7 @@ const createNewPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   const { id, altText, caption, location } = req.body;
+  console.log(req.body);
 
   const authorAuthentication = confirmPostAuthor(id, req?.reqID);
   if (!authorAuthentication) {
