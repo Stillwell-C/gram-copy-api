@@ -282,7 +282,6 @@ const createNewPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   const { id, altText, caption, location } = req.body;
-  console.log(req.body);
 
   const authorAuthentication = confirmPostAuthor(id, req?.reqID);
   if (!authorAuthentication) {
@@ -305,7 +304,7 @@ const updatePost = async (req, res) => {
   let updatedPost;
   //The following will update the timestamp
   if (altText || caption || location) {
-    let updateObj;
+    let updateObj = {};
     if (altText?.length) updateObj.altText = altText;
     if (caption?.length) updateObj.caption = caption;
     if (location?.length) updateObj.location = location;
