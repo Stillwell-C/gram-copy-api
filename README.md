@@ -38,13 +38,13 @@ Or the API's landing page [here](https://gram-copy-api-production.up.railway.app
 
 This application was made to clone most of Instagram's basic functionality.
 
-### UI
+#### UI
 
 The UI was made to be responsive with a mobile-first design and should function on both mobile devices and web browsers with larger screens. SCSS was used to style most components.
 
 There is a dark and light mode that can be toggled through the navigation menu. A user's preference will be stored in local storage for the next time they visit the site. If there is no user preference is already stored in local storage, the initial theme will be set using the user's preferred color theme in their browser if present. If there is no preferred theme in their browser or theme in local storage, it will default to the light color theme.
 
-### API & Authentication
+#### API & Authentication
 
 Users can create an account and sign in using their email or username and a password. Passwords are encrypted/decrypted and verified using the [bcrypt](https://www.npmjs.com/package/bcrypt) package.
 
@@ -60,7 +60,7 @@ Axios and Tanstack Query are used to make server requests and store/cache/invali
 
 The [cors](https://www.npmjs.com/package/cors) package is used to only allow requests from specific origins. In this case, I am only allowing requests originating from the frontend.
 
-### Users, Posts, Follows, and Notifications
+#### Users, Posts, Follows, and Notifications
 
 Users can create and edit their own posts (posts must include an image) and can tag up to 20 users on each post. Any logged in user can like, save, and comment on posts. Saved posts can be viewed on your own account on the "saved" tab (this is only visible to you) and images a user is tagged in can be viewed through the "tagged" tab of their profile.
 
@@ -80,7 +80,7 @@ Click on the three dot icon of a post or user profile to see additional options 
 
 Click on the notifications tab to see notifications for any time another user follows your account or likes or comments on one of your posts.
 
-### Accessibility
+#### Accessibility
 
 Throughout this project, I have tried to make this website accessible to screen readers, especially with respect to forms, error messages, and modals. However, any input on how to improve on this is greatly appreciated. I am sure there are instances where I have misued or neglected to properly implement ARIA.
 
@@ -88,7 +88,7 @@ Users are able to add custom alt text for the images in their posts.
 
 The [focus-trap-react](https://www.npmjs.com/package/focus-trap-react) package is used to trap focus when a modal is present on the screen. All modals can be exited using the escape key.
 
-### Additional Info
+#### Additional Info
 
 Chatting was implemented on an earlier version of this website with a firebase backend, and I plan to update this to work on my own backend in the future.
 
