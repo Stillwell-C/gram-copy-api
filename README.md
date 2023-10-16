@@ -58,6 +58,8 @@ Specific routes require a valid JWT access token to access. JWT verification is 
 
 Axios and Tanstack Query are used to make server requests and store/cache/invalidate data with the exception of the access token that is stored in the redux store.
 
+The [cors](https://www.npmjs.com/package/cors) package is used to only allow requests from specific origins. In this case, I am only allowing requests originating from the frontend.
+
 ### Users, Posts, Follows, and Notifications
 
 Users can create and edit their own posts (posts must include an image) and can tag up to 20 users on each post. Any logged in user can like, save, and comment on posts. Saved posts can be viewed on your own account on the "saved" tab (this is only visible to you) and images a user is tagged in can be viewed through the "tagged" tab of their profile.
@@ -90,7 +92,9 @@ The [focus-trap-react](https://www.npmjs.com/package/focus-trap-react) package i
 
 Chatting was implemented on an earlier version of this website with a firebase backend, and I plan to update this to work on my own backend in the future.
 
-Almost all text content (profiles, comments, post information, etc.) was generated using ChatGPT.
+Almost all text content (profiles, comments, post information, etc.) was generated using ChatGPT. Post information, hashtags, location, etc. does not match images in most cases. The number of locations and hashtags for the initial post data was intentionally limited to better demonstrate how these features can be used.
+
+All images were found on [unsplash](https://unsplash.com/). Profiles and posts with the initial data (any that has been created by me) do not and are not meant to reflect the original image posters.
 
 ## Known Issues
 
