@@ -8,7 +8,7 @@ I made this while following the NodeJS course from [The Odin Project's](https://
 
 The application is live at https://gram-copy.vercel.app/
 
-## Backend code
+## Frontend code
 
 View the frontend code [here](https://github.com/Stillwell-C/gram-copy)
 
@@ -20,6 +20,7 @@ Or the API's landing page [here](https://gram-copy-api-production.up.railway.app
 
 - Built using MERN stack / REST API
 - Reponsive, mobile-first UI
+- TanStack Query
 - Toggleable dark and light mode
 - Authentication with JWT refresh & access tokens
 - Create/edit/delete user accounts
@@ -52,11 +53,11 @@ Users are limited to 5 attempts with a incorrect passwords in a 3 hour span befo
 
 Authentication is handled with a JWT refresh token stored in an HTTP only secure cookie and a separate JWT access token stored in a redux store with a 15-minute expiration.
 
-If a user is logged in and does not have a JWT access token (e.g. the user has refreshed their page) or has sent a request to the sever that has been rejected due to an expired access token, the front end will automatically access the API's and save the access token received before reattempting the user's initial request.
+If a user is logged in and does not have a JWT access token (e.g. the user has refreshed their page) or has sent a request to the sever that has been rejected due to an expired access token, the front end will automatically access the API's refresh route and save the access token received before reattempting the user's initial request.
 
-Specific routes require a valid JWT access token to access. JWT verification is done using the [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) package. Anytime a user's ID is used on the backend (e.g. requesting a user's feed, updating data, etc.), this is supplied by the decoded access token.
+Specific routes require a valid JWT access token to access. JWT verification is done using the [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) package. Anytime a user's ID is used on the backend (e.g. requesting a user's feed, updating data, etc.), this is supplied by the decoded access token. Pages for routes requring a JWT to access are also protected on the frontend and require a user to be logged in to access.
 
-Axios and Tanstack Query are used to make server requests and store/cache/invalidate data with the exception of the access token that is stored in the redux store.
+Axios and TanStack Query are used to make server requests and cache/invalidate data on the frontend. Altering data receieved from the server (such as liking a post or following a user) will update the cache or will invalidate the cache (requiring refetch of some or all of the data). This works well for data across the cache in most cases (if you like a post, I intend for all instances of that post to be invalidated including in the multiple types of image feeds and on a user's profile even when this means invalidating a whole feed); however, there may be some limited cases where some cached data is not perfectly updated or cached. I hope to continue to hone this feature for better performance and user experience. The only server data stored in the redux store is the access token.
 
 The [cors](https://www.npmjs.com/package/cors) package is used to only allow requests from specific origins. In this case, I am only allowing requests originating from the frontend.
 
@@ -67,6 +68,8 @@ Users can create and edit their own posts (posts must include an image) and can 
 Users can edit all profile information including their username and profile image (however, not to the same username or email as another user). They may also delete accounts by entering their correct password (rate-limiter-flexible is also used here to lock after 5 attempts with an incorrect password). This action will also delete all the user's posts as well as all of the follows associated with their account (i.e. if you follow a user who then deletes their account, the number of users you are following should decrease by 1). I do, however, see this as an area of the API with potential performance or other unintended consequences and hope to continue to refine this process. Comments and notifications from a deleted user will still be visible, however, the name will be changed to Deleted User and no link will be provided to their account.
 
 Visit a user's profile to see their posts, posts they are tagged in, user information, the users following them, and the users they follow.
+
+A user profile can be banned, in which case the profile will not be accessible or searchable.
 
 Add a hashtag or at sign in front of text (comments, bio, etc.) to link to a hashtag search or a user's profile. Clicking on text starting with an @ symbol with link you to the user's profile page. Clicking on text starting with a # symbol will link you to posts where the user has used the hashtag in their initial comment.
 
@@ -82,7 +85,7 @@ Click on the notifications tab to see notifications for any time another user fo
 
 #### Accessibility
 
-Throughout this project, I have tried to make this website accessible to screen readers, especially with respect to forms, error messages, and modals. However, any input on how to improve on this is greatly appreciated. I am sure there are instances where I have misued or neglected to properly implement ARIA.
+Throughout this project, I have tried to make this website accessible to screen readers, especially with respect to forms, error messages, and modals. However, any input on how to improve on this is greatly appreciated. I am sure there are instances where I have misused or neglected to properly implement ARIA.
 
 Users are able to add custom alt text for the images in their posts.
 
@@ -90,7 +93,7 @@ The [focus-trap-react](https://www.npmjs.com/package/focus-trap-react) package i
 
 #### Additional Info
 
-Chatting was implemented on an earlier version of this website with a firebase backend, and I plan to update this to work on my own backend in the future.
+Chatting was implemented on an earlier version of this website with a Firebase backend, and I plan to update this to work on my own backend in the future.
 
 Almost all text content (profiles, comments, post information, etc.) was generated using ChatGPT. Post information, hashtags, location, etc. does not match images in most cases. The number of locations and hashtags for the initial post data was intentionally limited to better demonstrate how these features can be used.
 
@@ -109,7 +112,8 @@ All images were found on [unsplash](https://unsplash.com/). Profiles and posts w
 ### Frontend
 
 - ReactJS
-- Redux
+- React Router
+- Redux Toolkit
 - Axios
 - Tanstack-Query
 - SASS
