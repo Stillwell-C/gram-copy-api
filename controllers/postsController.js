@@ -28,8 +28,6 @@ const getPost = async (req, res) => {
     return res.status(400).json({ message: "Post ID required" });
   }
 
-  const reqID = req.reqID;
-
   const validID = checkValidObjectID(req.params.id);
 
   if (!validID) {
@@ -40,21 +38,6 @@ const getPost = async (req, res) => {
 
   if (!post) {
     return res.status(400).json({ message: "Post not found" });
-  }
-
-  post.isFollow = false;
-
-  if (reqID) {
-    const like = await findPostLike(reqID, post._id);
-    const save = await findPostSave(reqID, post._id);
-
-    post.isLiked = like ? true : false;
-    post.isSaved = save ? true : false;
-
-    if (post.user._id !== reqID) {
-      const follow = await findFollow(post.user._id, reqID);
-      if (follow) post.isFollow = true;
-    }
   }
 
   return res.json(post);
@@ -101,22 +84,21 @@ const getMultiplePosts = async (req, res) => {
 
   //This works but has slowed down process. May be unavoidable
   if (reqID) {
-    for (const post of posts) {
-      const like = await findPostLike(reqID, post._id);
-      const save = await findPostSave(reqID, post._id);
-      let follow = false;
-      if (post.user._id !== reqID)
-        follow = await findFollow(post.user._id, reqID);
-
-      post.isLiked = like ? true : false;
-      post.isSaved = save ? true : false;
-      post.isFollow = follow ? true : false;
-    }
+    // for (const post of posts) {
+    //   // const like = await findPostLike(reqID, post._id);
+    //   // const save = await findPostSave(reqID, post._id);
+    //   let follow = false;
+    //   if (post.user._id !== reqID)
+    //     // follow = await findFollow(post.user._id, reqID);
+    //   // post.isLiked = like ? true : false;
+    //   // post.isSaved = save ? true : false;
+    //   // post.isFollow = follow ? true : false;
+    // }
   } else {
     for (const post of posts) {
-      post.isLiked = false;
-      post.isSaved = false;
-      post.isFollow = false;
+      // post.isLiked = false;
+      // post.isSaved = false;
+      // post.isFollow = false;
     }
   }
 
