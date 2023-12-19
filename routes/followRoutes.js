@@ -12,4 +12,6 @@ router.route("/:id/followers").get(followController.getAllFollowers);
 
 router.route("/:id/following").get(followController.getAllFollowing);
 
+router.route("/user/:id").get(verifyJWT, followController.getFollow);
+
 module.exports = router;
