@@ -11,4 +11,6 @@ router
 
 router.route("/user/").get(verifyJWT, postLikeController.getUsersLikedPosts);
 
+router.route("/post/:id").get(verifyJWT, postLikeController.getLikedPost);
+
 module.exports = router;
