@@ -2,7 +2,7 @@ const {
   generateExpectedSignature,
   deleteImageFromCloudinary,
 } = require("../service/cloudinary.services");
-const { findFollow, findAllFollowing } = require("../service/follow.services");
+const { findAllFollowing } = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
 const {
   findPost,
@@ -19,8 +19,6 @@ const {
   findSearchedPosts,
   confirmPostAuthor,
 } = require("../service/post.services");
-const { findPostLike } = require("../service/postLike.service");
-const { findPostSave } = require("../service/postSave.service");
 const { findUserById, findAndUpdateUser } = require("../service/user.services");
 
 const getPost = async (req, res) => {
@@ -115,7 +113,6 @@ const getTaggedPosts = async (req, res) => {
 
 const searchPosts = async (req, res) => {
   const { page, limit, param, query } = req.query;
-  const reqID = req.reqID;
 
   const posts = await findSearchedPosts(param, query, page, limit);
 
