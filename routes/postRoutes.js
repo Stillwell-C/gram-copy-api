@@ -7,15 +7,19 @@ const verifyJWT = require("../middleware/verifyJWT");
 router
   .route("/")
   .get(selectiveJWTVerification, postController.getMultiplePosts)
-  .post(postController.createNewPost)
+  .post(verifyJWT, postController.createNewPost)
   .patch(verifyJWT, postController.updatePost)
   .delete(verifyJWT, postController.deletePost);
 
-router.route("/search").get(postController.searchPosts);
+router
+  .route("/search")
+  .get(selectiveJWTVerification, postController.searchPosts);
 
 router.route("/tagged").patch(verifyJWT, postController.updateTaggedUsers);
 
-router.route("/tagged/:userID").get(postController.getTaggedPosts);
+router
+  .route("/tagged/:userID")
+  .get(selectiveJWTVerification, postController.getTaggedPosts);
 
 router.route("/:id").get(postController.getPost);
 
