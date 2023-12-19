@@ -11,4 +11,6 @@ router
   .post(verifyJWT, postSaveController.createPostSave)
   .delete(verifyJWT, postSaveController.deletePostSave);
 
+router.route("/post/:id").get(verifyJWT, postSaveController.getSavedPost);
+
 module.exports = router;
