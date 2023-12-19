@@ -172,6 +172,46 @@ const confirmPostAuthor = async (postID, userID) => {
   return post?.user?.toString() === userID;
 };
 
+const serializePosts = (posts) => {
+  //Remove userID as it is part of key
+  const parsedPosts = posts.map((post) => {
+    return {
+      _id: post._id,
+      altText: post.altText,
+      caption: post.caption,
+      imgKey: post.imgKey,
+      likes: post.likes,
+      comments: post.comments,
+      location: post.location,
+      taggedUsers: post.taggedUsers,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      user: {
+        userImgKey: post.user.userImgKey,
+        username: post.user.username,
+      },
+    };
+  });
+
+  return JSON.stringify(parsedPosts);
+};
+
+const deserializePosts = (userID, posts) => {
+  const parsedPosts = JSON.parse(posts);
+
+  const deserializedPosts = parsedPosts.map((post) => {
+    return {
+      ...post,
+      user: {
+        ...post.user,
+        _id: userID,
+      },
+    };
+  });
+
+  return deserializedPosts;
+};
+
 module.exports = {
   findPost,
   findMultiplePosts,
@@ -187,4 +227,6 @@ module.exports = {
   findSearchedPosts,
   countSearchedPosts,
   confirmPostAuthor,
+  serializePosts,
+  deserializePosts,
 };
