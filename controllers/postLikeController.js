@@ -8,6 +8,16 @@ const {
   findAndDeletePostLike,
 } = require("../service/postLike.service");
 
+const getLikedPost = async (req, res) => {
+  const { id } = req.params;
+  const reqID = req.reqID;
+
+  const like = await findPostLike(reqID, id);
+  const isLiked = like ? true : false;
+
+  return res.json({ isLiked });
+};
+
 const getAllLikedUsers = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
@@ -118,6 +128,7 @@ const deletePostLike = async (req, res) => {
 };
 
 module.exports = {
+  getLikedPost,
   getAllLikedUsers,
   getUsersLikedPosts,
   createPostLike,
