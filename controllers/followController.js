@@ -10,6 +10,17 @@ const {
 const { createNotification } = require("../service/notification.services");
 const { findAndUpdateUser } = require("../service/user.services");
 
+const getFollow = async (req, res) => {
+  const { id } = req.params;
+  const reqID = req.reqID;
+
+  const follow = await findFollow(id, reqID);
+  const isFollow = follow ? true : false;
+  console.log(isFollow);
+
+  return res.json({ isFollow });
+};
+
 const getAllFollowers = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
@@ -204,6 +215,7 @@ const deleteFollow = async (req, res) => {
 };
 
 module.exports = {
+  getFollow,
   getAllFollowers,
   getAllFollowing,
   createFollow,
