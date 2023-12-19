@@ -18,8 +18,12 @@ const {
   countSearchedPosts,
   findSearchedPosts,
   confirmPostAuthor,
+  serializePosts,
+  deserializePosts,
 } = require("../service/post.services");
 const { findUserById, findAndUpdateUser } = require("../service/user.services");
+const { client } = require("../service/redis/client");
+const { userPostKey } = require("../service/redis/redisKeys");
 
 const getPost = async (req, res) => {
   if (!req?.params?.id) {
@@ -45,12 +49,14 @@ const getMultiplePosts = async (req, res) => {
   const { page, limit, userID, followingFeed } = req.query;
   const reqID = req.reqID;
 
+  //Create an array for userIDs
   let queryArr = [];
   if (followingFeed === "true") {
     if (!reqID) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
+    //Find users querier is following
     const following = await findAllFollowing(reqID);
 
     if (!following || !following?.length) {
@@ -59,10 +65,12 @@ const getMultiplePosts = async (req, res) => {
       });
     }
 
+    //Push to userID array
     for (const followedUser of following) {
       queryArr.push(followedUser.followed._id);
     }
   } else if (userID?.length) {
+    //Looking for a specific user's posts
     const idCheck = checkValidObjectID(userID);
     if (!idCheck) {
       return res.status(400).json({
@@ -70,9 +78,32 @@ const getMultiplePosts = async (req, res) => {
       });
     }
 
+    //Check redis for data
+    const cachedPostData = await client.hGet(userPostKey(userID), page);
+    const cachedPostTotals = await client.hGet(
+      userPostKey(userID),
+      "totalData"
+    );
+
+    if (cachedPostData) {
+      const deserializedPosts = deserializePosts(userID, cachedPostData);
+      const parsedPostTotals = JSON.parse(cachedPostTotals);
+
+      return res.json({
+        posts: deserializedPosts,
+        totalPosts: parsedPostTotals?.totalPosts,
+        totalPages: parsedPostTotals?.totalPages,
+        page,
+        limit,
+      });
+    }
+
+    //Push single user to userID array
     queryArr.push(userID);
   }
 
+  //If queryArr is empty, it will search for all posts
+  //This is done for explore tab queries
   const posts = await findMultiplePosts(page, limit, queryArr);
 
   const totalPosts = await countPosts(queryArr);
@@ -82,6 +113,33 @@ const getMultiplePosts = async (req, res) => {
 
   if (page && limit) {
     const totalPages = Math.ceil(totalPosts / limit);
+
+    //If userID is supplied, save post data to redis
+    if (userID?.length) {
+      //Save post data
+      await client.hSet(
+        userPostKey(userID),
+        page,
+        serializePosts(posts),
+        "EX",
+        60 * 60 * 24
+      );
+
+      //Save info about data totals
+      if (client.hExists(userPostKey(userID), "totalData") !== 1) {
+        await client.hSet(
+          userPostKey(userID),
+          "totalData",
+          JSON.stringify({
+            totalPosts,
+            totalPages,
+          }),
+          "EX",
+          60 * 60 * 24
+        );
+      }
+    }
+
     return res.json({ posts, totalPosts, limit, page, totalPages });
   }
 
@@ -194,6 +252,8 @@ const createNewPost = async (req, res) => {
     return res.status(400).json({ message: "User post count not updated" });
   }
 
+  await client.del(userPostKey(reqID));
+
   res.status(201).json({ message: "New post created" });
 };
 
@@ -232,6 +292,8 @@ const updatePost = async (req, res) => {
   if (!updatedPost) {
     return res.status(400).json({ message: "Post not found" });
   }
+
+  await client.del(userPostKey(req?.reqID));
 
   res.json({ message: `Updated post: ${updatedPost._id}` });
 };
@@ -296,6 +358,8 @@ const updateTaggedUsers = async (req, res) => {
     return res.status(400).json({ message: "Invalid data recieved" });
   }
 
+  await client.del(userPostKey(req?.reqID));
+
   res.json(updatedUser);
 };
 
@@ -340,6 +404,8 @@ const deletePost = async (req, res) => {
   }
 
   deleteImageFromCloudinary(imgKey);
+
+  await client.del(userPostKey(req?.reqID));
 
   res.json({ message: `Deleted post ${deletedPost._id}` });
 };
