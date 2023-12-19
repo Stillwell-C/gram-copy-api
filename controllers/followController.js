@@ -16,7 +16,6 @@ const getFollow = async (req, res) => {
 
   const follow = await findFollow(id, reqID);
   const isFollow = follow ? true : false;
-  console.log(isFollow);
 
   return res.json({ isFollow });
 };
