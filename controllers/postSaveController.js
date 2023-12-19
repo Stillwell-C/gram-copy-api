@@ -1,4 +1,3 @@
-const { findPostLike } = require("../service/postLike.service");
 const {
   findAllSavedUsers,
   findUsersSavedPosts,
@@ -55,13 +54,6 @@ const getUsersSavedPosts = async (req, res) => {
 
       return false;
     });
-
-  for (const post of formattedSavedPosts) {
-    const like = await findPostLike(id, post._id);
-
-    post.isLiked = like;
-    post.isSaved = true;
-  }
 
   const totalSavedPosts = await countUsersSavedPosts(id);
 
