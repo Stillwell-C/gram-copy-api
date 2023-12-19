@@ -9,6 +9,16 @@ const {
   countUsersWhoSavedPost,
 } = require("../service/postSave.service");
 
+const getSavedPost = async (req, res) => {
+  const { id } = req.params;
+  const reqID = req.reqID;
+
+  const save = await findPostSave(reqID, id);
+  const isSaved = save ? true : false;
+
+  return res.json({ isSaved });
+};
+
 const getAllSavedUsers = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
@@ -122,6 +132,7 @@ const deletePostSave = async (req, res) => {
 };
 
 module.exports = {
+  getSavedPost,
   getAllSavedUsers,
   getUsersSavedPosts,
   createPostSave,
