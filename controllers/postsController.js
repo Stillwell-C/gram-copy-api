@@ -82,26 +82,6 @@ const getMultiplePosts = async (req, res) => {
   if (!posts?.length)
     return res.status(400).json({ message: "No posts found" });
 
-  //This works but has slowed down process. May be unavoidable
-  if (reqID) {
-    // for (const post of posts) {
-    //   // const like = await findPostLike(reqID, post._id);
-    //   // const save = await findPostSave(reqID, post._id);
-    //   let follow = false;
-    //   if (post.user._id !== reqID)
-    //     // follow = await findFollow(post.user._id, reqID);
-    //   // post.isLiked = like ? true : false;
-    //   // post.isSaved = save ? true : false;
-    //   // post.isFollow = follow ? true : false;
-    // }
-  } else {
-    for (const post of posts) {
-      // post.isLiked = false;
-      // post.isSaved = false;
-      // post.isFollow = false;
-    }
-  }
-
   if (page && limit) {
     const totalPages = Math.ceil(totalPosts / limit);
     return res.json({ posts, totalPosts, limit, page, totalPages });
