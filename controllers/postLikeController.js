@@ -129,7 +129,7 @@ const deletePostLike = async (req, res) => {
 };
 
 const getPostLikeCount = async (req, res) => {
-  const { id } = req.params?.id;
+  const { id } = req.params;
 
   const likeCount = await countPostLikes(id);
 
