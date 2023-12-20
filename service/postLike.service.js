@@ -82,10 +82,15 @@ const findAndDeletePostLike = async (id) => {
   return PostLike.findByIdAndDelete(id);
 };
 
+const countPostLikes = async (postID) => {
+  return PostLike.countDocuments({ post: postID });
+};
+
 module.exports = {
   findPostLike,
   findAllLikedUsers,
   findUsersLikedPosts,
   createNewPostLike,
   findAndDeletePostLike,
+  countPostLikes,
 };
