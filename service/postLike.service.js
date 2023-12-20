@@ -83,7 +83,7 @@ const findAndDeletePostLike = async (id) => {
 };
 
 const countPostLikes = async (postID) => {
-  const idCheck = checkValidObjectID(parentPostId);
+  const idCheck = checkValidObjectID(postID);
   if (!idCheck) return;
   return PostLike.countDocuments({ post: postID });
 };
