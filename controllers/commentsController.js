@@ -4,6 +4,7 @@ const {
   createNewComment,
   findAndDeleteComment,
   findPostComments,
+  countComments,
 } = require("../service/comment.services");
 const { createNotification } = require("../service/notification.services");
 const { findAndUpdatePost } = require("../service/post.services");
@@ -116,9 +117,22 @@ const deleteComment = async (req, res) => {
   res.json({ message: `Deleted comment ${deletedComment._id}` });
 };
 
+const getPostCommentsCount = async (req, res) => {
+  const { id } = req.params;
+
+  const commentCount = await countComments(id);
+
+  if (!commentCount) {
+    return res.status(400).json({ message: "No comments found" });
+  }
+
+  return res.json({ comments: commentCount });
+};
+
 module.exports = {
   getComment,
   getPostComments,
   createComment,
   deleteComment,
+  getPostCommentsCount,
 };
