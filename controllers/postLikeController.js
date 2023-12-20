@@ -6,6 +6,7 @@ const {
   findPostLike,
   createNewPostLike,
   findAndDeletePostLike,
+  countPostLikes,
 } = require("../service/postLike.service");
 
 const getLikedPost = async (req, res) => {
@@ -127,10 +128,23 @@ const deletePostLike = async (req, res) => {
   return res.json({ message: "Unliked post" });
 };
 
+const getPostLikeCount = async (req, res) => {
+  const { id } = req.params?.id;
+
+  const likeCount = await countPostLikes(id);
+
+  if (!likeCount) {
+    return res.status(400).json({ message: "No likes found" });
+  }
+
+  return res.json({ likes: likeCount });
+};
+
 module.exports = {
   getLikedPost,
   getAllLikedUsers,
   getUsersLikedPosts,
   createPostLike,
   deletePostLike,
+  getPostLikeCount,
 };
