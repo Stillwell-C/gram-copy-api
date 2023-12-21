@@ -122,7 +122,7 @@ const getPostCommentsCount = async (req, res) => {
 
   const commentCount = await countComments(id);
 
-  if (!commentCount) {
+  if (commentCount !== 0 && !commentCount) {
     return res.status(400).json({ message: "No comments found" });
   }
 
