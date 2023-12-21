@@ -133,7 +133,7 @@ const getPostLikeCount = async (req, res) => {
 
   const likeCount = await countPostLikes(id);
 
-  if (!likeCount) {
+  if (likeCount !== 0 && !likeCount) {
     return res.status(400).json({ message: "No likes found" });
   }
 
