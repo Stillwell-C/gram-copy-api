@@ -80,12 +80,12 @@ const getMultiplePosts = async (req, res) => {
 
     //Check redis for data
     const cachedPostData = await client.hGet(userPostKey(userID), page);
-    const cachedPostTotals = await client.hGet(
-      userPostKey(userID),
-      "totalData"
-    );
 
     if (cachedPostData) {
+      const cachedPostTotals = await client.hGet(
+        userPostKey(userID),
+        "totalData"
+      );
       const deserializedPosts = deserializePosts(userID, cachedPostData);
       const parsedPostTotals = JSON.parse(cachedPostTotals);
 
