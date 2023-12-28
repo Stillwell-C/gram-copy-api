@@ -23,7 +23,7 @@ const {
 } = require("../service/post.services");
 const { findUserById, findAndUpdateUser } = require("../service/user.services");
 const { client } = require("../service/redis/client");
-const { userPostKey } = require("../service/redis/redisKeys");
+const { userPostKey, searchKey } = require("../service/redis/redisKeys");
 
 const getPost = async (req, res) => {
   if (!req?.params?.id) {
@@ -172,15 +172,49 @@ const getTaggedPosts = async (req, res) => {
 const searchPosts = async (req, res) => {
   const { page, limit, param, query } = req.query;
 
+  //Check redis cache for cached data
+  const cachedPostData = await client.hGet(searchKey(param, query), page);
+  //If redis cache exists, return cached data
+  if (cachedPostData) {
+    const cachedPostTotals = await client.hGet(
+      searchKey(param, query),
+      "totalData"
+    );
+
+    const parsedPostTotals = JSON.parse(cachedPostTotals);
+
+    return res.json({
+      posts: cachedPostData,
+      totalPosts: parsedPostTotals?.totalPosts,
+      totalPages: parsedPostTotals?.totalPages,
+      page,
+      limit,
+    });
+  }
+
   const posts = await findSearchedPosts(param, query, page, limit);
 
   const totalPosts = await countSearchedPosts(param, query);
 
-  if (!posts?.length)
+  if (!posts?.length) {
     return res.status(400).json({ message: "No posts found" });
+  }
 
   if (page && limit) {
     const totalPages = Math.ceil(totalPosts / limit);
+
+    //If post data found & no cache, cache data
+    //Update the totalData property of cached hash
+    //Expire cached data after 15 minutes
+    await client.hSet(searchKey(param, query), page, posts, "EX", 60 * 15);
+    await client.hSet(
+      searchKey(param, query),
+      "totalData",
+      JSON.stringify({ totalPosts, totalPages }),
+      "EX",
+      60 * 15
+    );
+
     return res.json({ posts, totalPosts, limit, page, totalPages });
   }
 
