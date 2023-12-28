@@ -181,10 +181,11 @@ const searchPosts = async (req, res) => {
       "totalData"
     );
 
+    const parsedPostData = JSON.parse(cachedPostData);
     const parsedPostTotals = JSON.parse(cachedPostTotals);
 
     return res.json({
-      posts: cachedPostData,
+      posts: parsedPostData,
       totalPosts: parsedPostTotals?.totalPosts,
       totalPages: parsedPostTotals?.totalPages,
       page,
@@ -206,7 +207,13 @@ const searchPosts = async (req, res) => {
     //If post data found & no cache, cache data
     //Update the totalData property of cached hash
     //Expire cached data after 15 minutes
-    await client.hSet(searchKey(param, query), page, posts, "EX", 60 * 15);
+    await client.hSet(
+      searchKey(param, query),
+      page,
+      JSON.stringify(posts),
+      "EX",
+      60 * 15
+    );
     if (client.hExists(searchKey(param, query), "totalData") !== 1) {
       await client.hSet(
         searchKey(param, query),
