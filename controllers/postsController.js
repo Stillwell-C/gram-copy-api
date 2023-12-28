@@ -207,13 +207,15 @@ const searchPosts = async (req, res) => {
     //Update the totalData property of cached hash
     //Expire cached data after 15 minutes
     await client.hSet(searchKey(param, query), page, posts, "EX", 60 * 15);
-    await client.hSet(
-      searchKey(param, query),
-      "totalData",
-      JSON.stringify({ totalPosts, totalPages }),
-      "EX",
-      60 * 15
-    );
+    if (client.hExists(searchKey(param, query), "totalData") !== 1) {
+      await client.hSet(
+        searchKey(param, query),
+        "totalData",
+        JSON.stringify({ totalPosts, totalPages }),
+        "EX",
+        60 * 15
+      );
+    }
 
     return res.json({ posts, totalPosts, limit, page, totalPages });
   }
