@@ -12,6 +12,8 @@ router
 
 router.route("/userData").get(verifyJWT, usersController.getOwnUserData);
 
+router.route("/popular").get(usersController.getPopularUsers);
+
 router.route("/:id").get(usersController.getUser);
 
 router.route("/search/:searchQuery").get(usersController.searchUsers);
