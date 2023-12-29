@@ -13,6 +13,7 @@ const {
 } = require("../service/follow.services");
 const { checkValidObjectID } = require("../service/mongoose.services");
 const { findAndDeleteAllUserPosts } = require("../service/post.services");
+const { client } = require("../service/redis/client");
 const {
   duplicateEmailCheck,
   duplicateUsernameCheck,
@@ -25,6 +26,7 @@ const {
   searchUser,
   findUserByIdMinimalData,
   countSearchedUsers,
+  findPopularUsers,
 } = require("../service/user.services");
 
 const getUser = async (req, res) => {
@@ -57,6 +59,30 @@ const getUser = async (req, res) => {
   }
 
   res.json(userObj);
+};
+
+const getPopularUsers = async (req, res) => {
+  const cachedUserData = await client.get("popularUsers");
+  if (cachedUserData) {
+    const parsedUserData = JSON.parse(cachedUserData);
+
+    return res.json(parsedUserData);
+  }
+
+  const popularUsers = await findPopularUsers();
+
+  if (!popularUsers) {
+    return res.status(400).json({ message: "Popular users list not found" });
+  }
+
+  await client.set(
+    "popularUsers",
+    JSON.stringify(popularUsers),
+    "EX",
+    60 * 60 * 24
+  );
+
+  res.json(popularUsers);
 };
 
 const getOwnUserData = async (req, res) => {
@@ -367,6 +393,7 @@ module.exports = {
   getOwnUserData,
   getUsersFromArr,
   getAllUsers,
+  getPopularUsers,
   emailAvailability,
   usernameAvailability,
   searchUsers,
