@@ -152,6 +152,19 @@ const findAndDeleteUser = async (id) => {
   return User.findByIdAndDelete(id).exec();
 };
 
+const testUserCheck = (userID) => {
+  const testUsers = [
+    "64c1e004ba375748febb3857",
+    "64ec5f4bce5891f191abce3e",
+    "64f03c25a4813c258d32212e",
+    "64f03e9aa4813c258d32215f",
+  ];
+
+  const isMatch = testUsers.some((id) => userID === id);
+
+  return isMatch;
+};
+
 module.exports = {
   findUser,
   findSingleUser,
@@ -170,4 +183,5 @@ module.exports = {
   findAndUpdateUser,
   findAndUpdateArr,
   findAndDeleteUser,
+  testUserCheck,
 };
