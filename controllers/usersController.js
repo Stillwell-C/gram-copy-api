@@ -27,6 +27,7 @@ const {
   findUserByIdMinimalData,
   countSearchedUsers,
   findPopularUsers,
+  testUserCheck,
 } = require("../service/user.services");
 
 const getUser = async (req, res) => {
@@ -260,6 +261,13 @@ const updateUserInfo = async (req, res) => {
 
   const updateObj = {};
   if (username) {
+    const restrictedID = testUserCheck(id);
+    if (restrictedID) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized action on test account" });
+    }
+
     const duplicate = await duplicateUsernameCheck(username);
     if (duplicate && duplicate?._id.toString() !== id) {
       return res.status(409).json({ message: "Username not available" });
@@ -276,6 +284,13 @@ const updateUserInfo = async (req, res) => {
     updateObj.email = email;
   }
   if (newPassword && oldPassword) {
+    const restrictedID = testUserCheck(id);
+    if (restrictedID) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized action on test account" });
+    }
+
     const passwordMatch = await verifyUsersPassword(oldPassword, id);
 
     if (passwordMatch === "EXCEEDED") {
@@ -325,6 +340,13 @@ const updateUserInfo = async (req, res) => {
 const deleteUser = async (req, res) => {
   const id = req?.reqID;
   const { adminPassword, userPassword } = req.body;
+
+  const restrictedID = testUserCheck(id);
+  if (restrictedID) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized action on test account" });
+  }
 
   if (!id) {
     return res.status(400).json({ message: "User ID required" });
