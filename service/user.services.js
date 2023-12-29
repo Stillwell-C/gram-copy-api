@@ -63,6 +63,16 @@ const findMultipleUsers = async (page, limit) => {
   }
 };
 
+const findPopularUsers = async () => {
+  return User.find()
+    .sort("-followerNo")
+    .limit(5)
+    .select("-password")
+    .select("-email")
+    .lean()
+    .exec();
+};
+
 const searchUser = async (searchQuery, page, limit) => {
   const pageInt = parseInt(page) || 1;
   const limitInt = parseInt(limit) || 10;
@@ -151,6 +161,7 @@ module.exports = {
   findUserByIdMinimalData,
   findUserByUsernameWithoutPassword,
   findMultipleUsers,
+  findPopularUsers,
   searchUser,
   countSearchedUsers,
   duplicateUsernameCheck,
