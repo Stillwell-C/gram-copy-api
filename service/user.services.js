@@ -81,6 +81,8 @@ const searchUser = async (searchQuery, page, limit) => {
 
   const postsSkip = (pageInt - 1) * limitInt;
 
+  const emailRegex = `^${searchQuery}?(?=@|[a-z]|[A-Z]|$)`;
+
   return User.find({
     $or: [
       {
@@ -93,7 +95,7 @@ const searchUser = async (searchQuery, page, limit) => {
       },
       {
         email: {
-          $regex: `^${searchQuery}?(?=@|[a-z]|[A-Z]|$)`,
+          $regex: emailRegex,
           $options: "i",
         },
         banned: { $ne: true },
