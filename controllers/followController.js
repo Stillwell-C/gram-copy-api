@@ -49,6 +49,18 @@ const getAllFollowers = async (req, res) => {
   res.json({ followers, totalFollowers });
 };
 
+const getFollowerCount = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ message: "Must include userID" });
+  }
+
+  const followerCount = await countFollowers(id);
+
+  res.json({ followerCount });
+};
+
 const getAllFollowing = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
@@ -76,6 +88,18 @@ const getAllFollowing = async (req, res) => {
   }
 
   res.json({ following, totalFollowing });
+};
+
+const getFollowingCount = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ message: "Must include userID" });
+  }
+
+  const followingCount = await countFollowing(id);
+
+  res.json({ followingCount });
 };
 
 const createFollow = async (req, res) => {
@@ -181,7 +205,9 @@ const deleteFollow = async (req, res) => {
 module.exports = {
   getFollow,
   getAllFollowers,
+  getFollowerCount,
   getAllFollowing,
+  getFollowingCount,
   createFollow,
   deleteFollow,
 };
