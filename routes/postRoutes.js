@@ -23,4 +23,6 @@ router
 
 router.route("/:id").get(postController.getPost);
 
+router.route("/user/count/:id").get(postController.getUserPostCount);
+
 module.exports = router;
