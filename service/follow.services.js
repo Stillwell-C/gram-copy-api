@@ -21,7 +21,7 @@ const findAllFollowers = async (userID, populate = false, page, limit) => {
       const skip = (pageInt - 1) * limitInt;
 
       return Follow.find({ followed: userID })
-        .sort("createdAt")
+        .sort({ createdAt: 1, _id: 1 })
         .limit(limitInt)
         .skip(skip)
         .populate("follower", "_id username fullname userImgKey")
@@ -30,12 +30,14 @@ const findAllFollowers = async (userID, populate = false, page, limit) => {
     }
 
     return Follow.find({ followed: userID })
-      .sort("createdAt")
+      .sort({ createdAt: 1, _id: 1 })
       .populate("follower", "_id username fullname userImgKey")
       .select("-followed")
       .lean();
   } else {
-    return Follow.find({ followed: userID }).sort("createdAt").lean();
+    return Follow.find({ followed: userID })
+      .sort({ createdAt: 1, _id: 1 })
+      .lean();
   }
 };
 
@@ -51,7 +53,7 @@ const findAllFollowing = async (userID, populate = false, page, limit) => {
       const skip = (pageInt - 1) * limitInt;
 
       return Follow.find({ follower: userID })
-        .sort("createdAt")
+        .sort({ createdAt: 1, _id: 1 })
         .limit(limitInt)
         .skip(skip)
         .populate("followed", "_id username fullname userImgKey")
@@ -60,12 +62,14 @@ const findAllFollowing = async (userID, populate = false, page, limit) => {
     }
 
     return Follow.find({ follower: userID })
-      .sort("createdAt")
+      .sort({ createdAt: 1, _id: 1 })
       .populate("followed", "_id username fullname userImgKey")
       .select("-follower")
       .lean();
   } else {
-    return Follow.find({ follower: userID }).sort("createdAt").lean();
+    return Follow.find({ follower: userID })
+      .sort({ createdAt: 1, _id: 1 })
+      .lean();
   }
 };
 
