@@ -130,6 +130,10 @@ const countPosts = async (queryArr) => {
   }
 };
 
+const countUserPosts = async (userID) => {
+  return Post.countDocuments({ user: userID });
+};
+
 const countTaggedPosts = async (userID) => {
   return Post.countDocuments({ taggedUsers: userID });
 };
@@ -222,6 +226,7 @@ module.exports = {
   findAndRemoveTaggedUser,
   findAndDeletePost,
   countPosts,
+  countUserPosts,
   countTaggedPosts,
   findAndDeleteAllUserPosts,
   findSearchedPosts,
