@@ -23,7 +23,6 @@ const getFollow = async (req, res) => {
 const getAllFollowers = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
-  const reqID = req.reqID;
 
   const followers = await findAllFollowers(id, true, page, limit);
 
@@ -53,7 +52,6 @@ const getAllFollowers = async (req, res) => {
 const getAllFollowing = async (req, res) => {
   const { id } = req.params;
   const { page, limit } = req?.query;
-  const reqID = req.reqID;
 
   const following = await findAllFollowing(id, true, page, limit);
 
