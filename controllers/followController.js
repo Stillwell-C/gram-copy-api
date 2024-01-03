@@ -40,23 +40,6 @@ const getAllFollowers = async (req, res) => {
     return res.status(400).json({ message: "No followers found" });
   }
 
-  if (reqID) {
-    for (const follower of filteredFollowers) {
-      let follow = false;
-      if (follower?.follower?._id) {
-        if (follower?.follower?._id !== reqID) {
-          follow = await findFollow(follower?.follower?._id, reqID);
-        }
-
-        follower.follower.isFollow = follow ? true : false;
-      }
-    }
-  } else {
-    for (const follower of filteredFollowers) {
-      follower.follower.isFollow = false;
-    }
-  }
-
   const totalFollowers = await countFollowers(id);
 
   if (page && limit) {
@@ -85,22 +68,6 @@ const getAllFollowing = async (req, res) => {
 
   if (!filteredFollowing.length) {
     return res.status(400).json({ message: "No following users found" });
-  }
-
-  if (reqID) {
-    for (const followedUser of filteredFollowing) {
-      let follow = false;
-      if (followedUser?.followed?._id) {
-        if (followedUser.followed._id !== reqID)
-          follow = await findFollow(followedUser.followed._id, reqID);
-
-        followedUser.followed.isFollow = follow ? true : false;
-      }
-    }
-  } else {
-    for (const followedUser of filteredFollowing) {
-      followedUser.followed.isFollow = false;
-    }
   }
 
   const totalFollowing = await countFollowing(id);
