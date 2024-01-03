@@ -20,6 +20,7 @@ const {
   confirmPostAuthor,
   serializePosts,
   deserializePosts,
+  countUserPosts,
 } = require("../service/post.services");
 const { findUserById, findAndUpdateUser } = require("../service/user.services");
 const { client } = require("../service/redis/client");
@@ -144,6 +145,18 @@ const getMultiplePosts = async (req, res) => {
   }
 
   res.json({ posts, totalPosts });
+};
+
+const getUserPostCount = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ message: "Must include userID" });
+  }
+
+  const postCount = await countUserPosts(id);
+
+  res.json({ postCount });
 };
 
 const getTaggedPosts = async (req, res) => {
@@ -456,6 +469,7 @@ const deletePost = async (req, res) => {
 module.exports = {
   getPost,
   getMultiplePosts,
+  getUserPostCount,
   searchPosts,
   getTaggedPosts,
   createNewPost,
