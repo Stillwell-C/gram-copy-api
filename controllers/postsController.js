@@ -118,13 +118,9 @@ const getMultiplePosts = async (req, res) => {
     //If userID is supplied, save post data to redis
     if (userID?.length) {
       //Save post data
-      await client.hSet(
-        userPostKey(userID),
-        page,
-        serializePosts(posts),
-        "EX",
-        60 * 60 * 24
-      );
+      await client.hSet(userPostKey(userID), page, serializePosts(posts), {
+        EX: 60 * 60 * 24,
+      });
 
       //Save info about data totals
       if (client.hExists(userPostKey(userID), "totalData") !== 1) {
@@ -135,8 +131,9 @@ const getMultiplePosts = async (req, res) => {
             totalPosts,
             totalPages,
           }),
-          "EX",
-          60 * 60 * 24
+          {
+            EX: 60 * 60 * 24,
+          }
         );
       }
     }
@@ -220,20 +217,17 @@ const searchPosts = async (req, res) => {
     //If post data found & no cache, cache data
     //Update the totalData property of cached hash
     //Expire cached data after 15 minutes
-    await client.hSet(
-      searchKey(param, query),
-      page,
-      JSON.stringify(posts),
-      "EX",
-      60 * 15
-    );
+    await client.hSet(searchKey(param, query), page, JSON.stringify(posts), {
+      EX: 60 * 15,
+    });
     if (client.hExists(searchKey(param, query), "totalData") !== 1) {
       await client.hSet(
         searchKey(param, query),
         "totalData",
         JSON.stringify({ totalPosts, totalPages }),
-        "EX",
-        60 * 15
+        {
+          EX: 60 * 15,
+        }
       );
     }
 
