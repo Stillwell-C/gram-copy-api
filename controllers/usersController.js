@@ -66,7 +66,6 @@ const getPopularUsers = async (req, res) => {
   const cachedUserData = await client.get("popularUsers");
   if (cachedUserData) {
     const parsedUserData = JSON.parse(cachedUserData);
-
     return res.json(parsedUserData);
   }
 
@@ -76,12 +75,9 @@ const getPopularUsers = async (req, res) => {
     return res.status(400).json({ message: "Popular users list not found" });
   }
 
-  await client.set(
-    "popularUsers",
-    JSON.stringify(popularUsers),
-    "EX",
-    60 * 60 * 24
-  );
+  await client.set("popularUsers", JSON.stringify(popularUsers), {
+    EX: 60 * 60 * 24,
+  });
 
   res.json(popularUsers);
 };
